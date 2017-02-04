@@ -22,7 +22,7 @@ const BLOCK_CORE = {
   spans: [],
   default: false,
   listItem: null,
-  intendation: null,
+  indentation: 0,
   jsonType: 'object'
 }
 
