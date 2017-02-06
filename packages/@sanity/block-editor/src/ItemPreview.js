@@ -1,37 +1,21 @@
 import React, {PropTypes} from 'react'
-import FormBuilderPropTypes from '../../FormBuilderPropTypes'
-import equals from 'shallow-equals'
-import {getFieldType} from '../../schema/getFieldType'
-import Preview from '../../previews/Preview'
-
+import {Preview} from '@sanity/form-builder'
 
 export default class ItemPreview extends React.Component {
 
   static propTypes = {
-    field: FormBuilderPropTypes.field.isRequired,
+    type: PropTypes.object.isRequired,
     value: PropTypes.any
   };
 
-  static contextTypes = {
-    formBuilder: PropTypes.object
-  };
-
-  shouldComponentUpdate(nextProps) {
-    return !equals(nextProps, this.props)
-  }
-
-  getFieldType(field) {
-    return getFieldType(this.context.formBuilder.schema, field)
-  }
-
   render() {
-    const {value, field} = this.props
+    const {value, type} = this.props
 
     return (
       <Preview
-        style="default"
+        layout="default"
         value={value.serialize()}
-        field={field}
+        type={type}
       />
     )
   }

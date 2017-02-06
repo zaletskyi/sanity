@@ -1,5 +1,4 @@
 import React, {PropTypes} from 'react'
-import styles from '../styles/Link.css'
 
 function Link(props) {
   return (

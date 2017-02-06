@@ -6,9 +6,9 @@ import InsertBlockOnEnter from 'slate-insert-block-on-enter'
 
 import prepareSlateSchema from './util/prepareSlateSchema'
 import createLocalStatePatch from './util/createLocalStatePatch'
-import styles from './styles/BlockEditor.css'
 import randomKey from './util/randomKey'
 
+const styles = {}
 import FormBuilderNodeOnDrop from './plugins/FormBuilderNodeOnDrop'
 import FormBuilderNodeOnPaste from './plugins/FormBuilderNodeOnPaste'
 import TextFormattingOnKeyDown from './plugins/TextFormattingOnKeyDown'
@@ -24,8 +24,6 @@ import {
   SLATE_TEXT_BLOCKS,
   SLATE_LINK_TYPE
 } from './constants'
-
-import Toolbar from './toolbar/Toolbar'
 
 setKeyGenerator(randomKey.bind(null, 12))
 

@@ -4,7 +4,7 @@
   "description": "A generic editor for block content",
   "main": "index.js",
   "scripts": {
-    "start": "remon --require ./.babel-init.js demo-server/app.js",
+    "start": "cd demo-server && sanity start",
     "test": "tap test/*.test.js --node-arg --require --node-arg ./.babel-init.js",
     "test:lib:compile": "babel . -q --ignore node_modules,demo-server,perf --out-dir test-compiled",
     "test:lib": "npm run test:lib:compile && cd test-compiled && tap test/**.test.js && cd - && npm run test:lib:clean",
@@ -25,6 +25,11 @@
     "slate": "^0.16.11"
   },
   "devDependencies": {
+    "@sanity/base": "^0.100.8",
+    "@sanity/components": "^0.100.9",
+    "@sanity/core": "^0.100.3",
+    "@sanity/form-builder": "^0.100.9",
+    "@sanity/schema": "^0.100.5",
     "babel-plugin-syntax-flow": "^6.18.0",
     "babel-plugin-transform-flow-comments": "^6.22.0",
     "babelify": "^7.3.0",

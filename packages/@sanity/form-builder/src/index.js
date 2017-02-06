@@ -4,6 +4,8 @@ import * as ImageInput from './inputs/Image'
 import * as ReferenceInput from './inputs/Reference'
 import * as SlugInput from './inputs/Slug'
 
+export {default as Preview} from './Preview'
+
 export {defaultInputs}
 export {default as SlateInput} from './inputs/BlockEditor-slate'
 

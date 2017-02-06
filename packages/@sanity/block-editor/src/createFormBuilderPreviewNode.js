@@ -6,7 +6,6 @@ import OffsetKey from 'slate/lib/utils/offset-key'
 import Selection from 'slate/lib/models/selection'
 import ItemForm from './ItemForm'
 import ItemPreview from './ItemPreview'
-import styles from './styles/BlockPreview.css'
 
 const stopPropagation = event => event.stopPropagation()
 
