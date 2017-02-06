@@ -3,7 +3,7 @@ import {flatten, isEqual} from 'lodash'
 
 import {ImmutableAccessor} from '@sanity/mutator'
 
-import randomKey from '../Array/randomKey'
+import randomKey from './util/randomKey'
 import {splitTextNodeIntoArraysOfCharacterBySpan, spanAccessorsToSlateNodes} from './docUtils'
 import {slateMarksToSanity} from './conversion'
 

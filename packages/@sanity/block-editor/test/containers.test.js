@@ -1,5 +1,5 @@
 import {test} from 'tap'
-import SlateValueContainer from '../../src/inputs/BlockEditor-slate/SlateValueContainer'
+import SlateValueContainer from '../src/SlateValueContainer'
 import {Patcher, ImmutableAccessor} from '@sanity/mutator'
 
 import simpleDoc from './fixtures/simpleDoc.json'

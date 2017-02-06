@@ -7,7 +7,7 @@ import InsertBlockOnEnter from 'slate-insert-block-on-enter'
 import prepareSlateSchema from './util/prepareSlateSchema'
 import createLocalStatePatch from './util/createLocalStatePatch'
 import styles from './styles/BlockEditor.css'
-import randomKey from '../Array/randomKey'
+import randomKey from './util/randomKey'
 
 import FormBuilderNodeOnDrop from './plugins/FormBuilderNodeOnDrop'
 import FormBuilderNodeOnPaste from './plugins/FormBuilderNodeOnPaste'
