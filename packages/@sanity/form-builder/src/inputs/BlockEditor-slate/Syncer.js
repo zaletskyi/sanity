@@ -42,6 +42,12 @@ function isDeprecatedBlockValue(value) {
   }
   return false
 }
+function updateNodeValueByKey(state, key, nextValue) {
+  const change = state.change()
+  return typeof nextValue === 'undefined'
+    ? change.removeNodeByKey(key) // does not work for some weird reason
+    : change.setNodeByKey(key, {data: {value: nextValue}})
+}
 
 export default withPatchSubscriber(class Syncer extends React.PureComponent {
   static propTypes = {
@@ -73,12 +79,8 @@ export default withPatchSubscriber(class Syncer extends React.PureComponent {
       }
       const nextValue = patchEvent.patches.reduce((state, patch) => {
         const [key, ...path] = patch.path
-        const nodeValue = state.document.getDescendant(key).data.get('value')
-        const change = state.change()
-          .setNodeByKey(key, {
-            data: {value: apply(nodeValue, {...patch, path})}
-          })
-        return change.state
+        const currentValue = state.document.getDescendant(key).data.get('value')
+        return updateNodeValueByKey(state, key, apply(currentValue, {...patch, path})).state
       }, prevState.value)
 
       return {value: nextValue}

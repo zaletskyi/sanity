@@ -51,11 +51,6 @@ export default class FormBuilderBlock extends React.Component {
     onPatch(event.prefixAll(node.key))
   }
 
-  handleInvalidValueChange = event => {
-    const {onPatch, node} = this.props
-    onPatch(event.prefixAll(node.key))
-  }
-
   handleDragStart = event => {
     const {editor} = this.props
     this._editorNode = ReactDOM.findDOMNode(editor)
@@ -203,30 +198,6 @@ export default class FormBuilderBlock extends React.Component {
     return this.props.type.of.find(memberType => memberType.name === typeName)
   }
 
-  renderPreview() {
-    const value = this.getValue()
-    const memberType = this.getMemberTypeOf(value)
-    if (!memberType) {
-      const validMemberTypes = this.props.type.of.map(type => type.name)
-      const actualType = resolveTypeName(value)
-      return (
-        <InvalidValue
-          validTypes={validMemberTypes}
-          actualType={actualType}
-          value={value}
-          onChange={this.handleInvalidValueChange}
-        />
-      )
-    }
-    return (
-      <Preview
-        type={memberType}
-        value={this.getValue()}
-        layout="block"
-      />
-    )
-  }
-
   refFormBuilderBlock = formBuilderBlock => {
     this.formBuilderBlock = formBuilderBlock
   }
@@ -235,10 +206,20 @@ export default class FormBuilderBlock extends React.Component {
     this.previewContainer = previewContainer
   }
 
-  renderInput() {
-    const value = this.getValue()
-    const memberType = this.getMemberTypeOf(value)
+  renderInvalidValue(value) {
+    const validMemberTypes = this.props.type.of.map(type => type.name)
+    const actualType = resolveTypeName(value)
+    return (
+      <InvalidValue
+        validTypes={validMemberTypes}
+        actualType={actualType}
+        value={value}
+        onChange={this.handleChange}
+      />
+    )
+  }
 
+  renderInput(value, memberType) {
     const fieldsQty = ((memberType && memberType.fields) || []).length
 
     let editModalLayout = get(this, 'props.type.options.editModal')
@@ -336,6 +317,9 @@ export default class FormBuilderBlock extends React.Component {
       className = styles.root
     }
 
+    const value = this.getValue()
+    const memberType = this.getMemberTypeOf(value)
+
     return (
       <div
         {...attributes}
@@ -353,10 +337,12 @@ export default class FormBuilderBlock extends React.Component {
           ref={this.refPreview}
           className={styles.previewContainer}
         >
-          {this.renderPreview()}
+          {memberType
+            ? <Preview type={memberType} value={value} layout="block" />
+            : this.renderInvalidValue(value)}
         </span>
 
-        {isEditing && this.renderInput()}
+        {isEditing && memberType && this.renderInput(value, memberType)}
       </div>
     )
   }

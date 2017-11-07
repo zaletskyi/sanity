@@ -1,42 +1,25 @@
-import PropTypes from 'prop-types'
+// @flow
 import React from 'react'
-import FormBuilderPropTypes from '../../FormBuilderPropTypes'
+import {FormBuilderInput} from '../../FormBuilderInput'
+import PatchEvent from '../../PatchEvent'
 
-export default class ItemForm extends React.PureComponent {
-  static propTypes = {
-    type: FormBuilderPropTypes.type.isRequired,
-    value: PropTypes.any,
-    level: PropTypes.number,
-    onChange: PropTypes.func
-  };
-
-  static contextTypes = {
-    formBuilder: PropTypes.object
-  };
-
-  resolveInputComponent(type, fieldType) {
-    return this.context.formBuilder.resolveInputComponent(type, fieldType)
+export default class ItemForm extends React.Component<*, *, *> {
+  props: {
+    value: Object,
+    type: any,
+    level: number,
+    onChange: (event: PatchEvent, value: Object) => void
   }
 
-  handleChange = event => {
-    const {onChange} = this.props
-    onChange(event)
+  handleChange = (event : PatchEvent) => {
+    const {value, onChange} = this.props
+    onChange(event, value)
   }
 
   render() {
     const {value, type, level} = this.props
-
-    const InputComponent = this.context.formBuilder.resolveInputComponent(type)
-    if (!InputComponent) {
-      return (
-        <div>
-          No input component resolved for type {`"${type.name}"`}
-        </div>
-      )
-    }
-
     return (
-      <InputComponent
+      <FormBuilderInput
         value={value}
         type={type}
         level={level}
