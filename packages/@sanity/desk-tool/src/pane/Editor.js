@@ -442,6 +442,9 @@ export default withRouterHOC(class Editor extends React.PureComponent {
               value={draft || published || {_type: type.name}}
               type={type}
               onChange={this.handleChange}
+              markers={[
+                {path: ['translations', 'no'], type: 'validation', value: {warnings: [], errors: []}},
+              ]}
             />
           </form>
 

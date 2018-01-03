@@ -14,6 +14,7 @@ type Props = {
   onFocus: Path => void,
   onBlur: () => void,
   focusPath: Path,
+  markers: Array<*>,
   level: number,
   isRoot: boolean,
   path: Array<PathSegment>
@@ -23,6 +24,10 @@ const ENABLE_CONTEXT = () => {}
 
 function getDisplayName(component) {
   return component.displayName || component.name || 'Unknown'
+}
+
+function trimChildPath(path, childPath) {
+  return PathUtils.startsWith(path, childPath) ? PathUtils.trimLeft(path, childPath) : []
 }
 
 export const FormBuilderInput = class FormBuilderInput extends React.PureComponent<Props> {
@@ -39,7 +44,8 @@ export const FormBuilderInput = class FormBuilderInput extends React.PureCompone
 
   static defaultProps = {
     focusPath: [],
-    path: []
+    path: [],
+    markers: []
   }
 
   _input: ?FormBuilderInput
@@ -151,7 +157,7 @@ export const FormBuilderInput = class FormBuilderInput extends React.PureCompone
 
   getChildFocusPath() {
     const {path, focusPath} = this.props
-    return PathUtils.startsWith(path, focusPath) ? PathUtils.trimLeft(path, focusPath) : []
+    return trimChildPath(path, focusPath)
   }
 
   render() {
@@ -161,6 +167,7 @@ export const FormBuilderInput = class FormBuilderInput extends React.PureCompone
       onBlur,
       path,
       value,
+      markers,
       type,
       level,
       focusPath,
@@ -176,6 +183,7 @@ export const FormBuilderInput = class FormBuilderInput extends React.PureCompone
 
     const rootProps = isRoot ? {isRoot} : {}
 
+    const childMarkers = markers.map(marker => ({...marker, path: trimChildPath(path, marker.path)}))
     const childFocusPath = this.getChildFocusPath()
 
     const isLeaf = childFocusPath.length === 0
@@ -188,6 +196,7 @@ export const FormBuilderInput = class FormBuilderInput extends React.PureCompone
           {...rootProps}
           {...leafProps}
           value={value}
+          markers={childMarkers}
           type={type}
           onChange={this.handleChange}
           onFocus={this.handleFocus}
