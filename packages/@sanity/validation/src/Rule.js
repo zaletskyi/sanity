@@ -253,7 +253,9 @@ class Rule {
     }
 
     const regex = createUriRegex(customScheme, options.allowRelative, options.relativeOnly)
-    return this.cloneWithRules([{flag: 'uri', constraint: {options, regex}}])
+    return this.cloneWithRules([{flag: 'uri', constraint: {options, regex}}], {
+      removeDuplicates: true
+    })
   }
 
   // Array only
