@@ -35,6 +35,11 @@ function validateObject(obj, type, path, options) {
     return []
   }
 
+  if (!type) {
+    console.log(options, path, obj)
+    return []
+  }
+
   // Validate actual object itself
   let objChecks = []
   if (type.validation) {
