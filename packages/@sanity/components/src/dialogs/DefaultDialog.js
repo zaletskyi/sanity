@@ -90,20 +90,20 @@ export default class DefaultDialog extends React.PureComponent {
   }
 
   render() {
-    const {title, actions, isOpen, showHeader, kind, onClose, className, showCloseButton} = this.props
+    const {title, actions, showHeader, kind, onClose, className, showCloseButton} = this.props
     const classNames = `
       ${styles[kind]}
-      ${isOpen ? styles.isOpen : styles.isClosed}
+      ${styles.isOpen}
       ${showHeader ? styles.hasHeader : ''}
       ${actions && actions.length > 0 ? styles.hasFunctions : ''}
       ${className}
     `
 
     return (
-      <Stacked>
-        {isActive => (
-          <Portal isOpened={isOpen}>
-            <div className={classNames} ref={this.setDialogElement}>
+      <Portal>
+        <Stacked>
+          {isActive => (
+            <div className={classNames}>
               <div className={styles.dialog}>
                 <Escapable onEscape={event => ((isActive || event.shiftKey) && onClose())} />
                 <CaptureOutsideClicks onClickOutside={isActive ? onClose : undefined}>
@@ -139,9 +139,9 @@ export default class DefaultDialog extends React.PureComponent {
                 </CaptureOutsideClicks>
               </div>
             </div>
-          </Portal>
-        )}
-      </Stacked>
+          )}
+        </Stacked>
+      </Portal>
     )
   }
 }
