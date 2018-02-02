@@ -14,7 +14,7 @@ import Escapable from '../utilities/Escapable'
 
 const noop = () => {}
 
-export default class StatelessSearchableSelect extends React.PureComponent {
+export default class StatelessSearchableSelect extends React.Component {
   static propTypes = {
     onChange: PropTypes.func,
     value: PropTypes.any,
@@ -56,16 +56,10 @@ export default class StatelessSearchableSelect extends React.PureComponent {
     this.props.onChange(item)
   }
 
-  handlePortalOutsideClick = event => {
-    if (!this._rootNode.contains(event.target)) {
-      this.props.onClose()
-    }
-  }
-
   handleArrowClick = () => {
-    const {isOpen, onOpen, onClose} = this.props
+    const {isOpen, onOpen} = this.props
     if (isOpen) {
-      onClose()
+      this.handleClose()
     } else {
       onOpen()
     }
