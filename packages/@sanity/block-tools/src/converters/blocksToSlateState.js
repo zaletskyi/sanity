@@ -26,16 +26,11 @@ function toRawMark(markName) {
 
 function sanitySpanToRawSlateBlockNode(span, sanityBlock) {
 
-  if (!span._key) {
-    span._key = randomKey(12)
-  }
-
   if (span._type !== 'span') {
     return {
       kind: 'inline',
       isVoid: true,
       type: span._type,
-      key: span._key,
       data: {value: span},
       nodes: []
     }
@@ -61,13 +56,12 @@ function sanitySpanToRawSlateBlockNode(span, sanityBlock) {
   }
 
   if (!annotations) {
-    return {kind: 'text', key: span._key, ranges: [range]}
+    return {kind: 'text', ranges: [range]}
   }
 
   return {
     kind: 'inline',
     isVoid: false,
-    key: span._key,
     type: 'span',
     data: {annotations},
     nodes: [{kind: 'text', ranges: [range]}]

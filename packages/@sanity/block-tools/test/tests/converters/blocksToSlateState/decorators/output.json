@@ -16,7 +16,6 @@
         },
         "nodes": [
           {
-            "key": "randomKey0",
             "kind": "text",
             "ranges": [
               {
@@ -27,7 +26,6 @@
             ]
           },
           {
-            "key": "randomKey1",
             "kind": "text",
             "ranges": [
               {
@@ -54,7 +52,6 @@
         },
         "nodes": [
           {
-            "key": "randomKey2",
             "kind": "text",
             "ranges": [
               {
@@ -78,7 +75,6 @@
         },
         "nodes": [
           {
-            "key": "randomKey3",
             "kind": "text",
             "ranges": [
               {
