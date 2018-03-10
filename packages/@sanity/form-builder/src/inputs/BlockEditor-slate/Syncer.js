@@ -73,6 +73,7 @@ export default withPatchSubscriber(
     }
 
     handleNodePatch = patchEvent => {
+      console.log(patchEvent)
       this.setState(prevState => {
         if (prevState.isOutOfSync) {
           return prevState

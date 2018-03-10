@@ -13,9 +13,11 @@ import Toolbar from './toolbar/Toolbar'
 import createBlockEditorOperations from './createBlockEditorOperations'
 import prepareSlateForBlockEditor from './util/prepareSlateForBlockEditor'
 import initializeSlatePlugins from './util/initializeSlatePlugins'
+import EditNode from './EditNode'
 
 import styles from './styles/BlockEditor.css'
 import {SLATE_SPAN_TYPE} from './constants'
+
 const NOOP = () => {}
 
 export default class BlockEditor extends React.Component {
@@ -26,8 +28,8 @@ export default class BlockEditor extends React.Component {
     markers: PropTypes.arrayOf(PropTypes.shape({type: PropTypes.string.isRequired})),
     onChange: PropTypes.func,
     onFocus: PropTypes.func,
-    readOnly: PropTypes.bool,
-    onNodePatch: PropTypes.func
+    focusPath: PropTypes.array,
+    readOnly: PropTypes.bool
   }
 
   static defaultProps = {
@@ -42,8 +44,7 @@ export default class BlockEditor extends React.Component {
   state = {
     fullscreen: false,
     toolbarStyle: {},
-    preventScroll: false,
-    editorHasFocus: false
+    preventScroll: false
   }
 
   _inputId = uniqueId('SlateBlockEditor')
@@ -93,7 +94,9 @@ export default class BlockEditor extends React.Component {
     }
   }
 
-  handleNodePatch = event => this.props.onNodePatch(event)
+  handleNodeFocus = focusEvent => {
+    this.props.onFocus(focusEvent)
+  }
 
   handleInsertBlock = item => {
     if (item.options && item.options.inline) {
@@ -234,6 +237,7 @@ export default class BlockEditor extends React.Component {
   }
 
   focus() {
+    console.log('editor focus plz')
     this.editor.focus()
   }
 
@@ -281,20 +285,7 @@ export default class BlockEditor extends React.Component {
   }
 
   handleEditorContainerClick = () => {
-    this.editor.focus()
-  }
-
-  handleEditorFocus = event => {
-    this.props.onFocus()
-    this.setState({
-      editorHasFocus: true
-    })
-  }
-
-  handleEditorBlur = event => {
-    this.setState({
-      editorHasFocus: false
-    })
+    this.focus()
   }
 
   handleInputScroll = event => {
@@ -334,16 +325,64 @@ export default class BlockEditor extends React.Component {
     this._editorWrapper = element
   }
 
+  handleFullScreenScroll = event => {
+    const threshold = 100
+    const scrollTop = event.target.scrollTop
+    let ratio = scrollTop / threshold
+    if (ratio >= 1) {
+      ratio = 1
+    }
+    this.setState({
+      toolbarStyle: {
+        backgroundColor: `rgba(255, 255, 255, ${ratio * 0.95})`,
+        boxShadow: `0 2px ${5 * ratio}px rgba(0, 0, 0, ${ratio * 0.3})`
+      }
+    })
+  }
+
+  handleFullScreenClose = () => {
+    this.setState({
+      fullscreen: false
+    })
+  }
+
+  renderEditExpanded() {
+    const {focusPath, value, type, onNodePatch, onFocus} = this.props
+    const editNodeKey = focusPath[0]._key
+
+    const node = value.document.getDescendant(editNodeKey)
+    if (!node) {
+      // eslint-disable-next-line no-console
+      console.error(new Error(`Could not find node with key ${editNodeKey}`))
+      return null
+    }
+
+    const nodeValue = node.data.get('value')
+
+    return (
+      <EditNode
+        value={nodeValue}
+        type={type}
+        onChange={onNodePatch}
+        focusPath={focusPath}
+        onFocus={onFocus}
+      />
+    )
+  }
+
   renderBlockEditor() {
-    const {value, onChange, readOnly} = this.props
-    const {fullscreen, toolbarStyle, preventScroll, editorHasFocus} = this.state
+    const {value, onChange, readOnly, focusPath} = this.props
+    const {fullscreen, toolbarStyle, preventScroll} = this.state
+
+    const isExpanded = (focusPath || []).length > 1
 
     return (
       <div className={`${styles.root} ${fullscreen ? styles.fullscreen : ''}`}>
         <ActivateOnFocus
-          isActive={editorHasFocus || fullscreen || !preventScroll}
+          isActive={isExpanded || fullscreen || !preventScroll}
           message="Click to edit"
         >
+          {isExpanded && this.renderEditExpanded()}
           {!readOnly && (
             <Toolbar
               className={styles.toolbar}
@@ -393,27 +432,6 @@ export default class BlockEditor extends React.Component {
         </ActivateOnFocus>
       </div>
     )
-  }
-
-  handleFullScreenScroll = event => {
-    const threshold = 100
-    const scrollTop = event.target.scrollTop
-    let ratio = scrollTop / threshold
-    if (ratio >= 1) {
-      ratio = 1
-    }
-    this.setState({
-      toolbarStyle: {
-        backgroundColor: `rgba(255, 255, 255, ${ratio * 0.95})`,
-        boxShadow: `0 2px ${5 * ratio}px rgba(0, 0, 0, ${ratio * 0.3})`
-      }
-    })
-  }
-
-  handleFullScreenClose = () => {
-    this.setState({
-      fullscreen: false
-    })
   }
 
   render() {

@@ -12,6 +12,35 @@ export default {
       type: 'string'
     },
     {
+      name: 'onlyBlocks',
+      title: 'Content',
+      description: 'Simple with a few objects',
+      type: 'array',
+      of: [
+        {
+          type: 'object', title: 'Test object', name: 'testObject',
+          fields: [{name: 'field1', type: 'string'}]
+        },
+        {
+          type: 'object', title: 'Other test object', name: 'otherTestObject',
+          fields: [
+            {name: 'field1', type: 'string'},
+            {
+              name: 'field3',
+              type: 'array',
+              of: [
+                {type: 'object', fields: [
+                  {name: 'aString', type: 'string'},
+                  {name: 'aNumber', type: 'number'},
+                ]}
+              ]
+            }
+          ]
+        },
+        {type: 'block'},
+      ]
+    },
+    {
       name: 'defaults',
       title: 'Content',
       description: 'Profound description of what belongs here',

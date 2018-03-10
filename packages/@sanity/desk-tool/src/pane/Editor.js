@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types'
 // Connects the FormBuilder with various sanity roles
 import React from 'react'
+import ReactDOM from 'react-dom'
 import Spinner from 'part:@sanity/components/loading/spinner'
 import Button from 'part:@sanity/components/buttons/default'
 import FormBuilder from 'part:@sanity/form-builder'
@@ -604,6 +605,13 @@ export default withRouterHOC(
           onMenuToggle={this.handleMenuToggle}
           isSelected // last pane is always selected for now
         >
+          {ReactDOM.createPortal(
+            <div style={{position: 'fixed', top: 0, left: 0, padding: 2, background: 'white', zIndex: 30000}}>
+              <pre>{JSON.stringify(focusPath, null, 2)}</pre>
+            </div>,
+            document.body
+          )}
+
           <div className={styles.root}>
             {(isCreatingDraft || isPublishing || isUnpublishing) && (
               <div className={styles.spinnerContainer}>

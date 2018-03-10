@@ -115,8 +115,8 @@ export default function prepareSlateForBlockEditor(blockEditor) {
   const spanType = getSpanType(type)
   const allowedDecorators = spanType.decorators.map(decorator => decorator.value)
 
-  const FormBuilderBlock = createBlockNode(type, blockEditor.handleNodePatch)
-  const FormBuilderInline = createInlineNode(type, blockEditor.handleNodePatch)
+  const FormBuilderBlock = createBlockNode(type, blockEditor.handleNodeFocus)
+  const FormBuilderInline = createInlineNode(type, blockEditor.handleNodeFocus)
 
   const slateSchema = {
     nodes: {

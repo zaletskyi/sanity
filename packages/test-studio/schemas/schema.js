@@ -44,6 +44,7 @@ import species from './species'
 export default createSchema({
   name: 'test-examples',
   types: schemaTypes.concat([
+    blocks,
     book,
     author,
     species,
@@ -67,7 +68,6 @@ export default createSchema({
     files,
     references,
     geopoint,
-    blocks,
     slugs,
     customInputs,
     myImage,

@@ -1,42 +1,19 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {get} from 'lodash'
 import ReactDOM from 'react-dom'
 import OffsetKey from 'slate-react/lib/utils/offset-key'
 import setTransferData from 'slate-react/lib/utils/set-transfer-data'
 import TRANSFER_TYPES from 'slate-react/lib/constants/transfer-types'
 import Base64 from 'slate-base64-serializer'
 import {findDOMNode} from 'slate-react'
-import {FormBuilderInput} from '../../FormBuilderInput'
-import DefaultDialog from 'part:@sanity/components/dialogs/default'
-import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import Button from 'part:@sanity/components/buttons/default'
-import Popover from 'part:@sanity/components/dialogs/popover'
-import EditItemFold from 'part:@sanity/components/edititem/fold'
 import Preview from '../../Preview'
 import styles from './styles/FormBuilderBlock.css'
 import createRange from './util/createRange'
 import {resolveTypeName} from '../../utils/resolveTypeName'
 import InvalidValue from '../InvalidValueInput'
-import FocusManager from '../../sanity/focusManagers/SimpleFocusManager'
 import EditIcon from 'part:@sanity/base/edit-icon'
-import StopPropagation from './StopPropagation'
-
-const DIALOG_ACTIONS = [
-  {
-    index: '1',
-    name: 'close',
-    title: 'Close'
-  }
-  // {
-  //   index: '2',
-  //   name: 'delete',
-  //   kind: 'simple',
-  //   title: 'Delete',
-  //   color: 'danger',
-  //   secondary: true
-  // }
-]
+import {FOCUS_TERMINATOR} from '../../utils/pathUtils'
 
 export default class FormBuilderBlock extends React.Component {
   static propTypes = {
@@ -46,12 +23,11 @@ export default class FormBuilderBlock extends React.Component {
     editor: PropTypes.object,
     state: PropTypes.object,
     attributes: PropTypes.object,
-    onPatch: PropTypes.func
+    onFocus: PropTypes.func.isRequired
   }
 
   state = {
     isSelected: false,
-    isEditing: false,
     isDragging: false
   }
 
@@ -64,16 +40,6 @@ export default class FormBuilderBlock extends React.Component {
 
   componentWillUnmount() {
     this.removeSelectionHandler()
-  }
-
-  handleChange = event => {
-    const {onPatch, node} = this.props
-    onPatch(event.prefixAll(node.key))
-  }
-
-  handleInvalidValueChange = event => {
-    const {onPatch, node} = this.props
-    onPatch(event.prefixAll(node.key))
   }
 
   handleDragStart = event => {
@@ -210,12 +176,19 @@ export default class FormBuilderBlock extends React.Component {
     return this.props.node.data.get('value')
   }
 
-  handleToggleEdit = () => {
-    this.setState({isEditing: true})
+  handleInvalidValueChange = event => {
+    const {onPatch, node} = this.props
+    onPatch(event.prefixAll(node.key))
+  }
+
+  handleEditStart = () => {
+    const {node, onFocus} = this.props
+    onFocus([{_key: node.key}, FOCUS_TERMINATOR])
   }
 
   handleClose = () => {
-    this.setState({isEditing: false})
+    const {node, onFocus} = this.props
+    onFocus([{_key: node.key}])
   }
 
   getMemberTypeOf(value) {
@@ -260,78 +233,6 @@ export default class FormBuilderBlock extends React.Component {
     this.previewContainer = previewContainer
   }
 
-  renderFormBuilderInput = ({onFocus, onBlur, focusPath}) => {
-    const value = this.getValue()
-    const memberType = this.getMemberTypeOf(value)
-
-    return (
-      <div style={{minWidth: '30rem', padding: '1rem'}}>
-        <FormBuilderInput
-          type={memberType}
-          level={1}
-          value={value}
-          onChange={this.handleChange}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          focusPath={focusPath}
-          path={[{_key: value._key}]}
-        />
-      </div>
-    )
-  }
-  renderInput() {
-    const editModalLayout = get(this.props.type.options, 'editModal')
-
-    const input = <FocusManager>{this.renderFormBuilderInput}</FocusManager>
-
-    if (editModalLayout === 'fullscreen') {
-      return (
-        <FullscreenDialog isOpen title={this.props.node.title} onClose={this.handleClose}>
-          {input}
-        </FullscreenDialog>
-      )
-    }
-
-    if (editModalLayout === 'fold') {
-      return (
-        <div className={styles.editBlockContainerFold}>
-          <EditItemFold isOpen title={this.props.node.title} onClose={this.handleClose}>
-            {input}
-          </EditItemFold>
-        </div>
-      )
-    }
-
-    if (editModalLayout === 'popover') {
-      return (
-        <div className={styles.editBlockContainerPopOver}>
-          <Popover
-            title={this.props.node.title}
-            onClose={this.handleClose}
-            onEscape={this.handleClose}
-            onClickOutside={this.handleClose}
-            onAction={this.handleDialogAction}
-            actions={DIALOG_ACTIONS}
-          >
-            {input}
-          </Popover>
-        </div>
-      )
-    }
-    return (
-      <DefaultDialog
-        isOpen
-        title={this.props.node.title}
-        onClose={this.handleClose}
-        showCloseButton={false}
-        onAction={this.handleDialogAction}
-        actions={DIALOG_ACTIONS}
-      >
-        {input}
-      </DefaultDialog>
-    )
-  }
-
   showBlockDragMarker(pos, node) {
     const {editor} = this.props
     editor.props.blockEditor.showBlockDragMarker(pos, node)
@@ -343,7 +244,6 @@ export default class FormBuilderBlock extends React.Component {
   }
 
   render() {
-    const {isEditing} = this.state
     const {attributes, node, editor} = this.props
     const isFocused = editor.props.blockEditor.props.value.selection.hasFocusIn(node)
 
@@ -370,35 +270,19 @@ export default class FormBuilderBlock extends React.Component {
         draggable
         ref={this.refFormBuilderBlock}
         className={className}
+        onClick={this.handleEditStart}
       >
-        <span
-          ref={this.refPreview}
-          className={styles.previewContainer}
-          onClick={this.handleToggleEdit}
-        >
+        <span ref={this.refPreview} className={styles.previewContainer}>
           <div className={styles.preview}>{this.renderPreview()}</div>
           <div className={styles.functions}>
             {memberType && (
               <span className={styles.type}>{memberType.title || memberType.name}</span>
             )}
             <div>
-              <Button kind="simple" icon={EditIcon} title="Delete" />
+              <Button kind="simple" icon={EditIcon} title="Edit" />
             </div>
-            {/*
-              Add delete button later when we have handleDelete here
-              <div>
-                <Button
-                  kind="simple"
-                  color="danger"
-                  icon={TrashIcon}
-                  title="Delete"
-                />
-              </div>
-            */}
           </div>
         </span>
-
-        {isEditing && <StopPropagation>{this.renderInput()}</StopPropagation>}
       </div>
     )
   }
