@@ -4,11 +4,19 @@ export const myImage = {
   name: 'myImage',
   title: 'Some image type',
   type: 'image',
+  fieldsets: [
+    {
+      title: 'Metadata',
+      name: 'metadata',
+      options: {collapsible: true, collapsed: true}
+    }
+  ],
   fields: [
     {
       name: 'caption',
       title: 'Caption',
-      type: 'string'
+      type: 'string',
+      fieldset: 'metadata'
     }
   ]
 }

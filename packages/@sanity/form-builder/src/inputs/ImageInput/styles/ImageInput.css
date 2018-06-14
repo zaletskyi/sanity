@@ -8,7 +8,7 @@
   flex-direction: column;
 
   @media (--screen-medium) {
-    flex-direction: row;
+    flex-direction: column;
   }
 }
 
@@ -63,10 +63,9 @@
 
 .fieldsWrapper {
   margin-top: 1rem;
-  margin-left: 1rem;
 }
 
-.content + .functions {
+.functions {
   margin-top: 1rem;
 }
 

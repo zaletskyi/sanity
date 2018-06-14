@@ -324,14 +324,11 @@ export default class ImageInput extends React.PureComponent<Props, State> {
 
     const {isAdvancedEditOpen, isSelectAssetOpen, uploadError, hasFocus} = this.state
 
-    const [highlightedFields, otherFields] = partition(
-      type.fields.filter(field => !HIDDEN_FIELDS.includes(field.name)),
-      'type.options.isHighlighted'
-    )
+    const fields = type.fields.filter(field => !HIDDEN_FIELDS.includes(field.name))
 
     const hasAsset = value && value.asset
 
-    const showAdvancedEditButton = value && (otherFields.length > 0 || this.isImageToolEnabled())
+    const showAdvancedEditButton = value && this.isImageToolEnabled()
 
     return (
       <UploadTargetFieldset
@@ -370,35 +367,35 @@ export default class ImageInput extends React.PureComponent<Props, State> {
               <UploadPlaceholder hasFocus={hasFocus} />
             )}
           </div>
-          {highlightedFields.length > 0 && (
-            <div className={styles.fieldsWrapper}>{this.renderFields(highlightedFields)}</div>
-          )}
+          <div className={styles.functions}>
+            {!readOnly && (
+              <FileInputButton
+                icon={UploadIcon}
+                onSelect={this.handleSelectFile}
+                accept={'' /* todo build from this.props.resolveUploaders */}
+              >
+                Upload
+              </FileInputButton>
+            )}
+            {!readOnly && (
+              <Button onClick={this.handleOpenSelectAsset} kind="simple">
+                Library
+              </Button>
+            )}
+            {showAdvancedEditButton && (
+              <Button
+                icon={readOnly ? VisibilityIcon : EditIcon}
+                kind="simple"
+                title={readOnly ? 'View details' : 'Edit details'}
+                onClick={this.handleStartAdvancedEdit}
+              >
+                Crop & Hotspot
+              </Button>
+            )}
+          </div>
+          <div className={styles.fieldsWrapper}>{this.renderFields(fields)}</div>
         </div>
         <div className={styles.functions}>
-          {!readOnly && (
-            <FileInputButton
-              icon={UploadIcon}
-              onSelect={this.handleSelectFile}
-              accept={'' /* todo build from this.props.resolveUploaders */}
-            >
-              Upload
-            </FileInputButton>
-          )}
-          {!readOnly && (
-            <Button onClick={this.handleOpenSelectAsset} kind="simple">
-              Select from library
-            </Button>
-          )}
-          {showAdvancedEditButton && (
-            <Button
-              icon={readOnly ? VisibilityIcon : EditIcon}
-              kind="simple"
-              title={readOnly ? 'View details' : 'Edit details'}
-              onClick={this.handleStartAdvancedEdit}
-            >
-              {readOnly ? 'View details' : 'Edit'}
-            </Button>
-          )}
           {hasAsset &&
             !readOnly && (
               <Button color="danger" kind="simple" onClick={this.handleRemoveButtonClick}>
@@ -406,7 +403,7 @@ export default class ImageInput extends React.PureComponent<Props, State> {
               </Button>
             )}
         </div>
-        {isAdvancedEditOpen && this.renderAdvancedEdit(otherFields)}
+        {isAdvancedEditOpen && this.renderAdvancedEdit()}
         {isSelectAssetOpen && (
           <Dialog title="Select image" onClose={this.handleCloseSelectAsset} isOpen>
             <SelectAsset onSelect={this.handleSelectAsset} />
