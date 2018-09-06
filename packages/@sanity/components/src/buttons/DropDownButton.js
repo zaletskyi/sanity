@@ -59,6 +59,14 @@ export default class DropDownButton extends React.PureComponent {
       menuOpened: true,
       width: event.target.offsetWidth
     })
+    if (
+      event.key == 'ArrowDown' &&
+      this.state.menuOpened &&
+      this._popperElement &&
+      this._popperElement.focus
+    ) {
+      this._popperElement.focus()
+    }
   }
 
   handleButtonBlur = event => {
@@ -106,6 +114,26 @@ export default class DropDownButton extends React.PureComponent {
       this.menuHasKeybaordFocus = true
       this.keyboardNavigation = true
       this.firstItemElement.current.focus()
+    }
+  }
+
+  setPopperElement = element => {
+    this._popperElement = element
+  }
+
+  handleMenuAction = item => {
+    const {onAction} = this.props
+    onAction(item)
+  }
+
+  handleButtonKeyDown = event => {
+    if (
+      event.key == 'ArrowDown' &&
+      this.state.menuOpened &&
+      this._popperElement &&
+      this._popperElement.focus
+    ) {
+      this._popperElement.focus()
     }
   }
 
