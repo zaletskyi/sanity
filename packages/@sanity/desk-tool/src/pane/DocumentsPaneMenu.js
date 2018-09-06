@@ -73,7 +73,7 @@ export default class DocumentsPaneMenu extends React.PureComponent {
   }
 
   render() {
-    const {orderingOptions} = this.props
+    const {orderingOptions, isOpen} = this.props
     const orderingItems = orderingOptions
       .map(orderingOption => ({
         title: orderingOption.title,
@@ -84,11 +84,16 @@ export default class DocumentsPaneMenu extends React.PureComponent {
       }))
       .concat(LIST_VIEW_ITEMS)
 
+    if (!isOpen) {
+      return true
+    }
+
     return (
       <Menu
         onAction={this.handleMenuAction}
         items={orderingItems}
         origin="top-right"
+        isOpen
         {...this.props}
       />
     )

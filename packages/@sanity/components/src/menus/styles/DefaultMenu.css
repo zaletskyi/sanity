@@ -9,6 +9,7 @@
   text-align: left;
   overflow: auto;
   overflow-x: hidden;
+  border: 5px solid red;
 }
 
 .list {
@@ -22,6 +23,8 @@
 }
 
 .isDisabled {
+  opacity: 0.4;
+
   @nest &:hover {
     background-color: inherit;
   }
@@ -29,6 +32,7 @@
 
 .focusedItem {
   composes: item;
+  composes: selected from 'part:@sanity/base/theme/layout/selectable-style';
 }
 
 .iconContainer {
@@ -53,10 +57,6 @@
 
 .divider {
   border-top: 1px solid var(--gray-light);
-}
-
-.isDisabled {
-  opacity: 0.4;
 }
 
 .isOpen {

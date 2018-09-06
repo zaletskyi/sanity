@@ -4,9 +4,11 @@ import React from 'react'
 import styles from 'part:@sanity/components/buttons/dropdown-style'
 import Button from 'part:@sanity/components/buttons/default'
 import ArrowIcon from 'part:@sanity/base/angle-down-icon'
-import Menu from 'part:@sanity/components/menus/default'
+import {List, Item} from 'part:@sanity/components/lists/default'
 import {omit, get} from 'lodash'
 import Poppable from 'part:@sanity/components/utilities/poppable'
+// import ArrowKeyNavigation from 'part:@sanity/components/utilities/arrow-key-navigation'
+import ArrowKeyNavigation from 'boundless-arrow-key-navigation/build'
 
 export default class DropDownButton extends React.PureComponent {
   static propTypes = {
@@ -26,6 +28,13 @@ export default class DropDownButton extends React.PureComponent {
     colored: PropTypes.bool,
     color: PropTypes.string,
     className: PropTypes.string,
+    remderItem: PropTypes.func
+  }
+
+  static defaultProps = {
+    renderItem(item) {
+      return <div>{item.title}</div>
+    }
   }
 
   state = {
@@ -45,6 +54,14 @@ export default class DropDownButton extends React.PureComponent {
       menuOpened: true,
       width: event.target.offsetWidth
     })
+    if (
+      event.key == 'ArrowDown' &&
+      this.state.menuOpened &&
+      this._popperElement &&
+      this._popperElement.focus
+    ) {
+      this._popperElement.focus()
+    }
   }
 
   handleClickOutside = event => {
@@ -62,8 +79,28 @@ export default class DropDownButton extends React.PureComponent {
     this.handleClose()
   }
 
+  setPopperElement = element => {
+    this._popperElement = element
+  }
+
+  handleMenuAction = item => {
+    const {onAction} = this.props
+    onAction(item)
+  }
+
+  handleButtonKeyDown = event => {
+    if (
+      event.key == 'ArrowDown' &&
+      this.state.menuOpened &&
+      this._popperElement &&
+      this._popperElement.focus
+    ) {
+      this._popperElement.focus()
+    }
+  }
+
   render() {
-    const {items, children, kind, className, ...rest} = omit(this.props, 'onAction')
+    const {items, renderItem, children, kind, className, ...rest} = omit(this.props, 'onAction')
     const {menuOpened, width} = this.state
 
     const modifiers = {
@@ -81,7 +118,12 @@ export default class DropDownButton extends React.PureComponent {
     }
 
     const target = (
-      <Button {...rest} onClick={this.handleOnClick} kind={kind}>
+      <Button
+        {...rest}
+        onClick={this.handleOnClick}
+        kind={kind}
+        onKeyDown={this.handleButtonKeyDown}
+      >
         <span className={styles.title}>{children}</span>
         <span className={styles.arrow}>
           <ArrowIcon color="inherit" />
@@ -98,14 +140,27 @@ export default class DropDownButton extends React.PureComponent {
           onClickOutside={this.handleClose}
         >
           {menuOpened && (
-            <div className={styles.popper} style={{minWidth: `${width}px`}}>
-              <Menu
-                items={items}
-                isOpen
-                className={styles.menu}
-                onAction={this.handleAction}
-                onClickOutside={this.handleClickOutside}
-              />
+            <div
+              className={styles.popper}
+              style={{minWidth: `${width}px`}}
+              ref={this.setPopperElement}
+              tabIndex="0"
+            >
+              {/* component list causes error here */}
+              <ArrowKeyNavigation> 
+                {items.map((item, i) => {
+                  return (
+                    <Item
+                      key={i}
+                      className={styles.listItem}
+                      onKeyPress={() => this.handleMenuAction(item)}
+                      item={item}
+                    >
+                      {renderItem(item)}
+                    </Item>
+                  )
+                })}
+              </ArrowKeyNavigation>
             </div>
           )}
         </Poppable>

@@ -24,6 +24,11 @@
   width: 100%;
 }
 
+.listItem {
+  composes: item from 'part:@sanity/base/theme/layout/selectable-style';
+  padding: 0.5em !important;
+}
+
 .popper {
   position: relative;
   z-index: var(--zindex-portal);
