@@ -28,7 +28,7 @@ export default class DropDownButton extends React.PureComponent {
     colored: PropTypes.bool,
     color: PropTypes.string,
     className: PropTypes.string,
-    remderItem: PropTypes.func
+    renderItem: PropTypes.func
   }
 
   static defaultProps = {
@@ -43,11 +43,11 @@ export default class DropDownButton extends React.PureComponent {
   state = {
     menuOpened: false
   }
+  menuHasKeybaordFocus = false
+  keyboardNavigation = false
 
   handleClose = () => {
     this.setState({menuOpened: false})
-    console.log('close')
-    // this.buttonElement.current.focus()
   }
 
   setMenuElement = element => {
@@ -61,6 +61,13 @@ export default class DropDownButton extends React.PureComponent {
     })
   }
 
+  handleButtonBlur = event => {
+    // console.log('buttonBlur')
+    if (this.state.menuOpened && !this.menuHasKeybaordFocus && this.keyboardNavigation) {
+      this.handleClose()
+    }
+  }
+
   handleClickOutside = event => {
     if (this._rootElement && this._rootElement.contains(event.target)) {
       // Stop the open button from being clicked
@@ -69,21 +76,35 @@ export default class DropDownButton extends React.PureComponent {
     } else {
       this.handleClose()
     }
+    this.buttonElement.current.focus()
+  }
+
+  handleItemClick = item => {
+    this.handleAction(item)
+  }
+
+  handleItemKeyPress = (event, item) => {
+    if (event.key === 'Enter') {
+      this.handleAction(item)
+    }
   }
 
   handleAction = item => {
     this.props.onAction(item)
     this.handleClose()
+    this.keyboardNavigation = false
   }
 
-  handleMenuAction = item => {
-    console.log('menuAction', item)
-    const {onAction} = this.props
-    onAction(item)
+  handleMenuBlur = event => {
+    this.menuHasKeybaordFocus = false
+    this.buttonElement.current.focus()
+    this.handleClose()
   }
 
   handleButtonKeyDown = event => {
     if (event.key == 'ArrowDown' && this.state.menuOpened) {
+      this.menuHasKeybaordFocus = true
+      this.keyboardNavigation = true
       this.firstItemElement.current.focus()
     }
   }
@@ -112,6 +133,7 @@ export default class DropDownButton extends React.PureComponent {
         onClick={this.handleOnClick}
         kind={kind}
         onKeyDown={this.handleButtonKeyDown}
+        onBlur={this.handleButtonBlur}
         ref={this.buttonElement}
       >
         <span className={styles.title}>{children}</span>
@@ -139,7 +161,8 @@ export default class DropDownButton extends React.PureComponent {
                       <Item
                         key={i}
                         className={styles.listItem}
-                        onClick={() => this.handleAction(item)}
+                        onClick={() => this.handleItemClick(item)} //eslint-disable-line react/jsx-no-bind
+                        onKeyPress={event => this.handleItemKeyPress(event, item)} //eslint-disable-line react/jsx-no-bind
                         item={item}
                         tabIndex={0}
                         ref={i === 0 && this.firstItemElement}
@@ -150,6 +173,7 @@ export default class DropDownButton extends React.PureComponent {
                   })}
                 </ArrowKeyNavigation>
               </List>
+              <div tabIndex={0} onFocus={this.handleMenuBlur} />
             </div>
           )}
         </Poppable>
