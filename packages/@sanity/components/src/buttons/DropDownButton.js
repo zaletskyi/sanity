@@ -37,12 +37,17 @@ export default class DropDownButton extends React.PureComponent {
     }
   }
 
+  firstItemElement = React.createRef()
+  buttonElement = React.createRef()
+
   state = {
     menuOpened: false
   }
 
   handleClose = () => {
     this.setState({menuOpened: false})
+    console.log('close')
+    // this.buttonElement.current.focus()
   }
 
   setMenuElement = element => {
@@ -54,14 +59,6 @@ export default class DropDownButton extends React.PureComponent {
       menuOpened: true,
       width: event.target.offsetWidth
     })
-    if (
-      event.key == 'ArrowDown' &&
-      this.state.menuOpened &&
-      this._popperElement &&
-      this._popperElement.focus
-    ) {
-      this._popperElement.focus()
-    }
   }
 
   handleClickOutside = event => {
@@ -79,23 +76,15 @@ export default class DropDownButton extends React.PureComponent {
     this.handleClose()
   }
 
-  setPopperElement = element => {
-    this._popperElement = element
-  }
-
   handleMenuAction = item => {
+    console.log('menuAction', item)
     const {onAction} = this.props
     onAction(item)
   }
 
   handleButtonKeyDown = event => {
-    if (
-      event.key == 'ArrowDown' &&
-      this.state.menuOpened &&
-      this._popperElement &&
-      this._popperElement.focus
-    ) {
-      this._popperElement.focus()
+    if (event.key == 'ArrowDown' && this.state.menuOpened) {
+      this.firstItemElement.current.focus()
     }
   }
 
@@ -123,6 +112,7 @@ export default class DropDownButton extends React.PureComponent {
         onClick={this.handleOnClick}
         kind={kind}
         onKeyDown={this.handleButtonKeyDown}
+        ref={this.buttonElement}
       >
         <span className={styles.title}>{children}</span>
         <span className={styles.arrow}>
@@ -140,27 +130,26 @@ export default class DropDownButton extends React.PureComponent {
           onClickOutside={this.handleClose}
         >
           {menuOpened && (
-            <div
-              className={styles.popper}
-              style={{minWidth: `${width}px`}}
-              ref={this.setPopperElement}
-              tabIndex="0"
-            >
+            <div className={styles.popper} style={{minWidth: `${width}px`}}>
               {/* component list causes error here */}
-              <ArrowKeyNavigation> 
-                {items.map((item, i) => {
-                  return (
-                    <Item
-                      key={i}
-                      className={styles.listItem}
-                      onKeyPress={() => this.handleMenuAction(item)}
-                      item={item}
-                    >
-                      {renderItem(item)}
-                    </Item>
-                  )
-                })}
-              </ArrowKeyNavigation>
+              <List>
+                <ArrowKeyNavigation>
+                  {items.map((item, i) => {
+                    return (
+                      <Item
+                        key={i}
+                        className={styles.listItem}
+                        onClick={() => this.handleAction(item)}
+                        item={item}
+                        tabIndex={0}
+                        ref={i === 0 && this.firstItemElement}
+                      >
+                        {renderItem(item)}
+                      </Item>
+                    )
+                  })}
+                </ArrowKeyNavigation>
+              </List>
             </div>
           )}
         </Poppable>
