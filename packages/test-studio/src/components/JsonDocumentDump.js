@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import client from 'part:@sanity/base/client'
+import {combineLatest} from 'rxjs'
+import {map} from 'rxjs/operators'
+import documentStore from 'part:@sanity/base/datastore/document'
 import Spinner from 'part:@sanity/components/loading/spinner'
 
 export default class JsonDocumentDump extends React.PureComponent {
@@ -19,22 +21,20 @@ export default class JsonDocumentDump extends React.PureComponent {
     this.setState({isLoading: true, document: undefined})
 
     const {itemId} = this.props
-    const draftId = `drafts.${itemId}`
-    const query = '*[_id in [$itemId, $draftId]]'
-    const params = {itemId, draftId}
+    const publishedId = itemId
+    const draftId = `drafts.${publishedId}`
 
-    this.document$ = client.observable
-      .fetch(`${query} | order(_updatedAt desc) [0]`, params)
-      .subscribe(document => this.setState({document, isLoading: false}))
-
-    this.documentListener$ = client.observable
-      .listen(query, params)
-      .subscribe(mut => this.setState({document: mut.result, isLoading: false}))
+    const {draft, published} = documentStore.checkoutPair({publishedId, draftId})
+    this.documentListener$ = combineLatest([
+      draft.events.pipe(map(evt => evt.document)),
+      published.events.pipe(map(evt => evt.document))
+    ]).subscribe(([draftSnapshot, publishedSnapshot]) => {
+      this.setState({isLoading: false, document: draftSnapshot || publishedSnapshot})
+    })
   }
 
   dispose() {
-    if (this.document$) {
-      this.document$.unsubscribe()
+    if (this.documentListener$) {
       this.documentListener$.unsubscribe()
     }
   }

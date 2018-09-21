@@ -1,4 +1,4 @@
-import {from as observableFrom, of as observableOf} from 'rxjs'
+import {from as observableFrom, of as observableOf, combineLatest} from 'rxjs'
 import {mergeMap} from 'rxjs/operators'
 import isSubscribable from './isSubscribable'
 
@@ -18,6 +18,11 @@ export default function serializeStructure(item, context, resolverArgs = []) {
   // Builder?
   if (item && typeof item.serialize === 'function') {
     return serializeStructure(item.serialize(context))
+  }
+
+  // Array?
+  if (Array.isArray(item)) {
+    return combineLatest(item.map(curr => serializeStructure(curr, context, resolverArgs)))
   }
 
   // Plain value?

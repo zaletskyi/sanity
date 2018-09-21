@@ -2,6 +2,7 @@ import React from 'react'
 import S from '@sanity/desk-tool/structure-builder'
 import RefreshIcon from 'part:@sanity/base/sync-icon'
 import JsonDocumentDump from './components/JsonDocumentDump'
+import BookCoverPreview from './components/BookCoverPreview'
 
 // For testing. Bump the timeout to introduce som lag
 const delay = val => new Promise(resolve => setTimeout(resolve, 10, val))
@@ -12,9 +13,28 @@ export default () =>
     .title('Content')
     .items([
       S.documentListItem()
-        .id('foo-bar')
-        .title('Singleton author')
-        .schemaType('author'),
+        .id('asoiaf-asos')
+        .schemaType('book')
+        .title('A Storm of Swords')
+        .child([
+          // Edit the book
+          S.editor()
+            .id('editor')
+            .documentId('asoiaf-asos')
+            .schemaType('book'),
+
+          // Preview the book
+          S.component()
+            .component(BookCoverPreview)
+            .title('Preview')
+            .menuItems([
+              S.menuItem()
+                .title('Reload')
+                .action('reload')
+                .icon(RefreshIcon)
+                .showAsAction(true)
+            ])
+        ]),
 
       S.listItem()
         .title('Anything with a title')
@@ -34,21 +54,6 @@ export default () =>
       S.listItem()
         .title('Singleton?')
         .child(delay(S.editor({id: 'editor', options: {id: 'circular', type: 'referenceTest'}}))),
-
-      S.documentListItem()
-        .id('grrm')
-        .schemaType('author')
-        .child(
-          S.component()
-            .component(JsonDocumentDump)
-            .menuItems([
-              S.menuItem()
-                .title('Reload')
-                .action('reload')
-                .icon(RefreshIcon)
-                .showAsAction(true)
-            ])
-        ),
 
       ...S.documentTypeListItems()
     ])

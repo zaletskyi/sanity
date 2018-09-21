@@ -46,6 +46,16 @@ export default {
       type: 'image'
     },
     {
+      name: 'coverColor',
+      title: 'Cover color',
+      type: 'color'
+    },
+    {
+      name: 'synopsis',
+      title: 'Synopsis',
+      type: 'text'
+    },
+    {
       name: 'publicationYear',
       title: 'Year of publication',
       type: 'number'
