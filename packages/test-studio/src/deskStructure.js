@@ -29,8 +29,8 @@ export default () =>
             .title('Preview')
             .menuItems([
               S.menuItem()
-                .title('Reload')
-                .action('reload')
+                .title('Toggle Dark Mode')
+                .action('toggleDarkMode')
                 .icon(RefreshIcon)
                 .showAsAction(true)
             ])
