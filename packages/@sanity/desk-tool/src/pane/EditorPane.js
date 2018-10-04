@@ -170,10 +170,12 @@ export default withDocumentType(
     }
 
     componentDidMount() {
+      console.log('EditorPane componentDidMount ', this.props.options.id)
       this._isMounted = true
     }
 
     componentWillUnmount() {
+      console.log('EditorPane componentWillUnmount ', this.props.options.id)
       this._isMounted = false
 
       // Cancel throttled commit since draft will be nulled on unmount
