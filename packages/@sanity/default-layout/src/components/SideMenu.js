@@ -2,9 +2,9 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import CloseIcon from 'part:@sanity/base/close-icon'
 import SignOutIcon from 'part:@sanity/base/sign-out-icon'
-import ToolSwitcher from 'part:@sanity/default-layout/tool-switcher'
 import {HAS_SPACES} from '../util/spaces'
 import SpaceSwitcher from './SpaceSwitcher'
+import ToolList from './ToolList'
 import UpdateNotifier from './UpdateNotifier'
 
 import styles from './styles/SideMenu.css'
@@ -34,12 +34,7 @@ function SideMenu(props) {
           </div>
         )}
 
-        <ToolSwitcher
-          direction="vertical"
-          tools={tools}
-          activeToolName={activeToolName}
-          onSwitchTool={onSwitchTool}
-        />
+        <ToolList tools={tools} activeToolName={activeToolName} onSwitchTool={onSwitchTool} />
 
         <div className={styles.menuBottom}>
           <div className={styles.signOutButton}>

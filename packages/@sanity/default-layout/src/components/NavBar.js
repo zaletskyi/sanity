@@ -2,39 +2,34 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import Ink from 'react-ink'
 import {Tooltip} from 'react-tippy'
-import config from 'config:sanity'
 import PlusIcon from 'part:@sanity/base/plus-icon'
 import HamburgerIcon from 'part:@sanity/base/hamburger-icon'
-import ToolSwitcher from 'part:@sanity/default-layout/tool-switcher'
 import SearchIcon from 'part:@sanity/base/search-icon'
-import {StateLink} from 'part:@sanity/base/router'
-import Branding from './Branding'
 import LoginStatus from './LoginStatus'
-import SearchContainer from './SearchContainer'
+
 import styles from './styles/NavBar.css'
 
 function NavBar(props) {
   const {
-    searchIsOpen,
+    branding,
     onCreateButtonClick,
     onToggleMenu,
-    onSwitchTool,
     onUserLogout,
     onSearchOpen,
-    onSearchClose,
     onSetLoginStatusElement,
-    router,
-    tools,
-    user,
-    showLabel,
-    showToolSwitcher
+    onSetRootElement,
+    search,
+    searchIsOpen,
+    showToolSwitcher,
+    toolBar,
+    user
   } = props
   let searchClassName = styles.search
   if (searchIsOpen) searchClassName += ` ${styles.searchIsOpen}`
   let className = styles.root
   if (showToolSwitcher) className += ` ${styles.withToolSwitcher}`
   return (
-    <div className={className} data-search-open={searchIsOpen}>
+    <div className={className} data-search-open={searchIsOpen} ref={onSetRootElement}>
       <div className={styles.hamburger}>
         <button
           className={styles.hamburgerButton}
@@ -45,9 +40,7 @@ function NavBar(props) {
           <HamburgerIcon />
         </button>
       </div>
-      <StateLink toIndex className={styles.branding}>
-        <Branding projectName={config && config.projectName} />
-      </StateLink>
+      <div className={styles.branding}>{branding}</div>
       <a className={styles.createButton} onClick={onCreateButtonClick}>
         <Tooltip
           title="Create new document"
@@ -62,23 +55,9 @@ function NavBar(props) {
           <Ink duration={200} opacity={0.1} radius={200} />
         </Tooltip>
       </a>
-      <div className={styles.toolSwitcher}>
-        <ToolSwitcher
-          direction="horizontal"
-          tools={tools}
-          activeToolName={router.state.tool}
-          onSwitchTool={onSwitchTool}
-          showLabel={showLabel}
-        />
-      </div>
+      <div className={styles.toolSwitcher}>{toolBar}</div>
       <div className={searchClassName}>
-        <div>
-          <SearchContainer
-            shouldBeFocused={searchIsOpen}
-            onOpen={onSearchOpen}
-            onClose={onSearchClose}
-          />
-        </div>
+        <div>{search}</div>
       </div>
       <div className={styles.extras}>{/* Insert plugins here */}</div>
       <div className={styles.loginStatus}>
@@ -96,29 +75,24 @@ function NavBar(props) {
 }
 
 NavBar.defaultProps = {
-  showLabel: true,
-  showToolSwitcher: true,
-  onSetLoginStatusElement: undefined
+  branding: undefined,
+  onSetLoginStatusElement: undefined,
+  onSetRootElement: () => null,
+  showLabel: false,
+  showToolSwitcher: false
 }
 
 NavBar.propTypes = {
-  searchIsOpen: PropTypes.bool.isRequired,
+  branding: PropTypes.element,
   onCreateButtonClick: PropTypes.func.isRequired,
   onToggleMenu: PropTypes.func.isRequired,
-  onSwitchTool: PropTypes.func.isRequired,
   onUserLogout: PropTypes.func.isRequired,
   onSearchOpen: PropTypes.func.isRequired,
-  onSearchClose: PropTypes.func.isRequired,
+  onSetRootElement: PropTypes.func,
   onSetLoginStatusElement: PropTypes.func,
-  router: PropTypes.shape({
-    state: PropTypes.shape({tool: PropTypes.string}),
-    navigate: PropTypes.func
-  }).isRequired,
-  tools: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string
-    })
-  ).isRequired,
+  search: PropTypes.element.isRequired,
+  searchIsOpen: PropTypes.bool.isRequired,
+  toolBar: PropTypes.element.isRequired,
   user: PropTypes.shape({
     name: PropTypes.string,
     profileImage: PropTypes.string

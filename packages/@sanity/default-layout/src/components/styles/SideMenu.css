@@ -71,8 +71,10 @@
 }
 
 .userProfileText {
-  line-height: 2.0625em;
-  padding: 0 var(--small-padding);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 33px;
+  padding: 0 calc(var(--small-padding) + 2px);
   vertical-align: top;
 }
 

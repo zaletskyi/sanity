@@ -49,12 +49,12 @@ class UpdateNotifier extends Component {
         <a onClick={this.handleShowUpdateNotifier} className={className}>
           <strong>Sanity Studio</strong>{' '}
           {!isUpToDate && (
-            <div className={styles.warningIcon}>
-              <WarningIcon />
-            </div>
+            <span className={styles.warningIcon}>
+              <WarningIcon />{' '}
+            </span>
           )}
           <span className={isUpToDate ? styles.upToDateText : styles.upgradeText}>
-            {isUpToDate ? 'Up to date' : 'Upgrade'}
+            {isUpToDate ? 'Up to date' : 'Outdated'}
           </span>
         </a>
       </div>

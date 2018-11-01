@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {Tooltip} from 'react-tippy'
 import PluginIcon from 'part:@sanity/base/plugin-icon'
 
-import styles from './styles/ToolSwitcher.css'
+import styles from './styles/ToolList.css'
 
-function ToolSwitcher(props) {
+function ToolList(props) {
   const {activeToolName, renderItem, showIcon, showLabel, tools} = props
 
   return (
@@ -28,22 +27,11 @@ function ToolSwitcher(props) {
 
         return (
           <li key={tool.name}>
-            <Tooltip
-              title={tool.title}
-              arrow
-              inertia
-              theme="dark"
-              distance="8"
-              sticky
-              size="small"
-              disabled={showLabel}
-            >
-              {renderItem ? (
-                renderItem({className: itemClassName, children, tool})
-              ) : (
-                <a className={itemClassName}>{children}</a>
-              )}
-            </Tooltip>
+            {renderItem ? (
+              renderItem({className: itemClassName, children, tool})
+            ) : (
+              <a className={itemClassName}>{children}</a>
+            )}
           </li>
         )
       })}
@@ -51,7 +39,7 @@ function ToolSwitcher(props) {
   )
 }
 
-ToolSwitcher.defaultProps = {
+ToolList.defaultProps = {
   activeToolName: undefined,
   renderItem: undefined,
   showIcon: true,
@@ -59,7 +47,7 @@ ToolSwitcher.defaultProps = {
   tools: []
 }
 
-ToolSwitcher.propTypes = {
+ToolList.propTypes = {
   activeToolName: PropTypes.string,
   renderItem: PropTypes.func,
   showIcon: PropTypes.bool,
@@ -73,4 +61,4 @@ ToolSwitcher.propTypes = {
   )
 }
 
-export default ToolSwitcher
+export default ToolList

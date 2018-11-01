@@ -1,0 +1,36 @@
+.root {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  text-decoration: none;
+  padding: 0.75em 1.75em;
+  color: inherit;
+
+  @nest &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.activeItem {
+  composes: item;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toolIconContainer {
+  @nest & > svg {
+    display: block;
+    font-size: 25px;
+  }
+}
+
+.toolLabel {
+  flex: 1;
+  font-size: 14px;
+  line-height: 25px;
+  padding: 0 0.25em;
+  white-space: nowrap;
+}

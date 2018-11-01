@@ -7,15 +7,13 @@ import {storiesOf} from 'part:@sanity/storybook'
 import {withKnobs, text, boolean, number} from 'part:@sanity/storybook/addons/knobs'
 import HamburgerIcon from 'part:@sanity/base/hamburger-icon'
 import PlusIcon from 'part:@sanity/base/plus-icon'
-import PluginIcon from 'part:@sanity/base/plugin-icon'
 import ViewColumnIcon from 'part:@sanity/base/view-column-icon'
 import Branding from './components/Branding'
-import ToolSwitcherWidget from './components/ToolSwitcherWidget'
+import ToolSwitcher from './components/ToolSwitcher'
 import NotFound from './components/NotFound'
 import LoginStatus from './components/LoginStatus'
 import SearchField from './components/SearchField'
 import SearchResults from './components/SearchResults'
-import ToolSwitcherItem from './components/ToolSwitcherItem'
 
 import NavBarStyles from './components/styles/NavBar.css'
 import DefaultLayoutStyles from './components/styles/DefaultLayout.css'
@@ -31,7 +29,7 @@ storiesOf('Default layout')
     return (
       <div className={className}>
         <div className={DefaultLayoutStyles.navBar}>
-          <div className={NavBarStyles.root}>
+          <div className={`${NavBarStyles.root} ${NavBarStyles.withToolSwitcher}`}>
             <div className={NavBarStyles.hamburger}>
               <button
                 className={NavBarStyles.hamburgerButton}
@@ -75,23 +73,22 @@ storiesOf('Default layout')
               />
             </div>
             <div className={NavBarStyles.toolSwitcher}>
-              <ToolSwitcherWidget
-                onSwitchTool={event => console.log('onSwitchTool()', event)}
+              <ToolSwitcher
                 tools={[
                   {
-                    name: 'Desk tool',
+                    name: 'desk-tool',
+                    title: 'Desk tool',
                     icon: ViewColumnIcon
                   },
                   {
-                    name: 'Plugin 1',
-                    icon: PluginIcon
+                    name: 'plugin-1',
+                    title: 'Plugin 1'
                   },
                   {
-                    name: 'Plugin 2',
-                    icon: PluginIcon
+                    name: 'plugin-2',
+                    title: 'Plugin 2'
                   }
                 ]}
-                renderItem={tool => <ToolSwitcherItem title={tool.name} icon={tool.icon} />}
               />
             </div>
             <div className={NavBarStyles.loginStatus}>
@@ -111,7 +108,7 @@ storiesOf('Default layout')
   .add('Branding', () => {
     return (
       <div className={DefaultLayoutStyles.navBar}>
-        <div className={NavBarStyles.root}>
+        <div className={`${NavBarStyles.root} ${NavBarStyles.withToolSwitcher}`}>
           <div className={NavBarStyles.branding}>
             <Branding />
           </div>
@@ -119,40 +116,28 @@ storiesOf('Default layout')
       </div>
     )
   })
-  .add('Toolswitcher', () => {
+  .add('ToolSwitcher', () => {
     return (
       <div className={DefaultLayoutStyles.navBar}>
-        <div className={NavBarStyles.root}>
+        <div className={`${NavBarStyles.root} ${NavBarStyles.withToolSwitcher}`}>
           <div className={NavBarStyles.toolSwitcher}>
-            <ToolSwitcherWidget
-              onSwitchTool={event => console.log('onSwitchTool()', event)}
+            <ToolSwitcher
               tools={[
                 {
-                  name: 'Desk tool',
+                  name: 'desk-tool',
+                  title: 'Desk tool',
                   icon: ViewColumnIcon
                 },
                 {
-                  name: 'Plugin 1',
-                  icon: PluginIcon
+                  name: 'plugin-1',
+                  title: 'Plugin 1'
                 },
                 {
-                  name: 'Plugin 2',
-                  icon: PluginIcon
+                  name: 'plugin-2',
+                  title: 'Plugin 2'
                 }
               ]}
-              renderItem={tool => <ToolSwitcherItem title={tool.name} icon={tool.icon} />}
             />
-          </div>
-        </div>
-      </div>
-    )
-  })
-  .add('ToolSwitcherItem', () => {
-    return (
-      <div className={DefaultLayoutStyles.navBar}>
-        <div className={NavBarStyles.root}>
-          <div className={NavBarStyles.toolSwitcher}>
-            <ToolSwitcherItem title={text('title (prop)', 'Desk tool')} icon={ViewColumnIcon} />
           </div>
         </div>
       </div>
@@ -164,7 +149,7 @@ storiesOf('Default layout')
   .add('Login Status', () => {
     return (
       <div className={DefaultLayoutStyles.navBar}>
-        <div className={NavBarStyles.root}>
+        <div className={`${NavBarStyles.root} ${NavBarStyles.withToolSwitcher}`}>
           <div className={NavBarStyles.loginStatus}>
             <LoginStatus
               user={{
@@ -184,30 +169,26 @@ storiesOf('Default layout')
     const query = text('query', '', 'props')
 
     return (
-      <div style={{background: '#444', height: '100vh'}}>
-        <div style={{background: '#fff', margin: '0 auto', position: 'relative'}}>
-          <SearchField
-            isBleeding
-            isFocused={boolean('isFocused', false, 'props')}
-            isOpen={boolean('isOpen', false, 'props')}
-            results={
-              <SearchResults
-                activeIndex={number('activeIndex', -1, 'props')}
-                isLoading={boolean('isLoading', false, 'props')}
-                items={items}
-                query={query}
-                renderItem={key => (
-                  <div key={key} style={{padding: '0.75em 1em'}}>
-                    {key}
-                  </div>
-                )}
-              />
-            }
-            value={query}
-            onChange={() => console.log('change')}
+      <SearchField
+        isBleeding
+        isFocused={boolean('isFocused', false, 'props')}
+        isOpen={boolean('isOpen', false, 'props')}
+        results={
+          <SearchResults
+            activeIndex={number('activeIndex', -1, 'props')}
+            isLoading={boolean('isLoading', false, 'props')}
+            items={items}
+            query={query}
+            renderItem={key => (
+              <div key={key} style={{padding: '0.75em 1em'}}>
+                {key}
+              </div>
+            )}
           />
-        </div>
-      </div>
+        }
+        value={query}
+        onChange={() => console.log('change')}
+      />
     )
   })
   .add('Search Field (desktop)', () => {
@@ -218,7 +199,7 @@ storiesOf('Default layout')
     return (
       <div>
         <div className={DefaultLayoutStyles.navBar}>
-          <div className={NavBarStyles.root}>
+          <div className={`${NavBarStyles.root} ${NavBarStyles.withToolSwitcher}`}>
             <div className={NavBarStyles.search}>
               <SearchField
                 hotkeys={['F']}

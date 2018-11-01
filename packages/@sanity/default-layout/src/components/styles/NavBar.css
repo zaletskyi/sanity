@@ -32,12 +32,13 @@
 
 .branding {
   grid-area: branding;
-  display: flex;
-  align-items: stretch;
-  padding: 1em;
 }
 
-a.branding {
+.brandingLink {
+  composes: noLink from "part:@sanity/base/theme/layout/helpers";
+  display: flex;
+  align-items: stretch;
+
   @nest &:hover {
     color: color(var(--white) a(80%));
     background-color: color(var(--white) a(10%));
@@ -84,6 +85,7 @@ a.branding {
 }
 
 .toolSwitcher {
+  grid-area: toolSwitcher;
   display: none;
   grid-area: toolSwitcher;
 

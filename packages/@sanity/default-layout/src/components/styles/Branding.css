@@ -8,6 +8,7 @@
   color: inherit;
   font-weight: 400;
   width: 100%;
+  padding: 1em;
 }
 
 .projectName {
@@ -19,12 +20,6 @@
   line-height: calc(17 / 16);
   font-weight: 600;
 }
-
-/* .link {
-  composes: noLink from "part:@sanity/base/theme/layout/helpers";
-  display: block;
-  padding: 1em;
-} */
 
 .brandLogoContainer {
   display: block;
