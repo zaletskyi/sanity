@@ -5,6 +5,10 @@
   grid-gap: var(--medium-padding);
 }
 
+.dialogContent {
+  max-width: 70rem;
+}
+
 .field {
   composes: root from '../../ObjectInput/styles/Field.css';
 }

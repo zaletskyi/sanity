@@ -12,6 +12,7 @@ import {get, partition} from 'lodash'
 import PatchEvent, {set, setIfMissing, unset} from '../../PatchEvent'
 import styles from './styles/ImageInput.css'
 import Dialog from 'part:@sanity/components/dialogs/fullscreen'
+import DialogContent from 'part:@sanity/components/dialogs/content'
 import {ObservableI} from '../../typedefs/observable'
 import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
 
@@ -245,24 +246,26 @@ export default class ImageInput extends React.PureComponent<Props, State> {
 
     return (
       <Dialog title="Edit details" onClose={this.handleStopAdvancedEdit} isOpen>
-        {this.isImageToolEnabled() &&
-          value &&
-          value.asset && (
-            <WithMaterializedReference materialize={materialize} reference={value.asset}>
-              {imageAsset => (
-                <ImageToolInput
-                  type={type}
-                  level={level}
-                  readOnly={readOnly}
-                  imageUrl={imageAsset.url}
-                  value={value}
-                  onChange={onChange}
-                />
-              )}
-            </WithMaterializedReference>
-          )}
-        <div className={styles.advancedEditFields}>{this.renderFields(fields)}</div>
-        <Button onClick={this.handleStopAdvancedEdit}>Close</Button>
+        <div className={styles.dialogContent}>
+          {this.isImageToolEnabled() &&
+            value &&
+            value.asset && (
+              <WithMaterializedReference materialize={materialize} reference={value.asset}>
+                {imageAsset => (
+                  <ImageToolInput
+                    type={type}
+                    level={level}
+                    readOnly={readOnly}
+                    imageUrl={imageAsset.url}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              </WithMaterializedReference>
+            )}
+          <div className={styles.advancedEditFields}>{this.renderFields(fields)}</div>
+          <Button onClick={this.handleStopAdvancedEdit}>Close</Button>
+        </div>
       </Dialog>
     )
   }

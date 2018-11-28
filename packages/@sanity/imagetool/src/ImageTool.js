@@ -57,11 +57,11 @@ function getCropCursorForHandle(handle) {
   switch (handle) {
     case 'left':
     case 'right':
-      return 'col-resize'
+      return 'ew-resize'
 
     case 'top':
     case 'bottom':
-      return 'row-resize'
+      return 'ns-resize'
 
     case 'topRight':
     case 'bottomLeft':
@@ -505,7 +505,7 @@ export default class ImageTool extends React.PureComponent {
     //return context.restore();
     this.paintHotspot(context, opacity)
     //this.paintDragHandle(context);
-    this.debug(context)
+    //this.debug(context)
     this.paintCropBorder(context)
 
     if (!readOnly) {
@@ -549,7 +549,7 @@ export default class ImageTool extends React.PureComponent {
     Object.keys(crophandles).forEach(handle => {
       context.fillStyle =
         this.state.cropping === handle
-          ? `rgba(202, 54, 53, ${opacity})`
+          ? `rgba(0, 0, 0, ${opacity})`
           : `rgba(230, 230, 230, ${opacity + 0.4})`
       const {left, top, height, width} = crophandles[handle]
       context.fillRect(left, top, width, height)

@@ -3,7 +3,6 @@ import React from 'react'
 
 import type {Type} from '../../typedefs'
 import PatchEvent, {set} from '../../PatchEvent'
-import Fieldset from 'part:@sanity/components/fieldsets/default'
 
 import ImageTool from '@sanity/imagetool'
 import HotspotImage from '@sanity/imagetool/HotspotImage'
@@ -44,10 +43,10 @@ type State = {
 }
 
 const PREVIEW_ASPECT_RATIOS = [
-  ['Portrait', 9 / 16],
-  ['Square', 1],
-  ['Landscape', 16 / 9],
-  ['Panorama', 4]
+  ['Portrait', 9 / 16, 'portrait'],
+  ['Landscape', 16 / 9, 'landscape'],
+  ['Square', 1, 'square'],
+  ['Panorama', 4, 'panorama']
 ]
 
 export default class ImageToolInput extends React.Component<Props, State> {
@@ -95,48 +94,46 @@ export default class ImageToolInput extends React.Component<Props, State> {
 
     return (
       <div className={styles.root}>
-        <Fieldset legend="Hotspot and crop" level={level}>
-          <div className={styles.wrapper}>
-            <div className={styles.imageToolContainer}>
-              <ImageTool
-                value={value}
-                src={imageUrl}
-                readOnly={readOnly}
-                onChangeEnd={this.handleChangeEnd}
-                onChange={this.handleChange}
-              />
-            </div>
-            <div className={styles.previewsContainer}>
-              <h2>Preview</h2>
-              <div className={styles.previews}>
-                {PREVIEW_ASPECT_RATIOS.map(([title, ratio]) => {
-                  return (
-                    <div key={ratio} className={styles.preview}>
-                      <h4>{title}</h4>
-                      <div className={styles.previewImage}>
-                        <ImageLoader src={imageUrl}>
-                          {({image, error}) =>
-                            error ? (
-                              <span>Unable to load image: {error.message}</span>
-                            ) : (
-                              <HotspotImage
-                                aspectRatio={ratio}
-                                src={image.src}
-                                srcAspectRatio={image.width / image.height}
-                                hotspot={value.hotspot || DEFAULT_HOTSPOT}
-                                crop={value.crop || DEFAULT_CROP}
-                              />
-                            )
-                          }
-                        </ImageLoader>
-                      </div>
+        <h2>Hotspot and crop</h2>
+        <div className={styles.wrapper}>
+          <div className={styles.imageToolContainer}>
+            <ImageTool
+              value={value}
+              src={imageUrl}
+              readOnly={readOnly}
+              onChangeEnd={this.handleChangeEnd}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className={styles.previewsContainer}>
+            <div className={styles.previews}>
+              {PREVIEW_ASPECT_RATIOS.map(([title, ratio, name]) => {
+                return (
+                  <div key={ratio} className={styles.preview} title={title} data-name={name}>
+                    <div className={styles.previewImage}>
+                      <ImageLoader src={imageUrl}>
+                        {({image, error}) =>
+                          error ? (
+                            <span>Unable to load image: {error.message}</span>
+                          ) : (
+                            <HotspotImage
+                              aspectRatio={ratio}
+                              src={image.src}
+                              srcAspectRatio={image.width / image.height}
+                              hotspot={value.hotspot || DEFAULT_HOTSPOT}
+                              crop={value.crop || DEFAULT_CROP}
+                            />
+                          )
+                        }
+                      </ImageLoader>
                     </div>
-                  )
-                })}
-              </div>
+                    <h4>{title}</h4>
+                  </div>
+                )
+              })}
             </div>
           </div>
-        </Fieldset>
+        </div>
       </div>
     )
   }
