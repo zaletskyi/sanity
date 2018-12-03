@@ -208,6 +208,11 @@
   }
 }
 
+.subtitle {
+  font-weight: 400;
+  margin-left: 1em;
+}
+
 .functions {
   display: flex;
   align-items: flex-end;

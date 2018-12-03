@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {partition} from 'lodash'
 import {withRouterHOC} from 'part:@sanity/base/router'
@@ -9,6 +9,8 @@ import DefaultPane from 'part:@sanity/components/panes/default'
 import QueryContainer from 'part:@sanity/base/query-container'
 import Snackbar from 'part:@sanity/components/snackbar/default'
 import Spinner from 'part:@sanity/components/loading/spinner'
+import {SanityDefaultPreview} from 'part:@sanity/base/preview'
+
 import {
   getPublishedId,
   isDraftId,
@@ -218,6 +220,32 @@ export default withRouterHOC(
       this.setState({scrollTop})
     }
 
+    getSelectedTitle = index => {
+      const {router, title} = this.props
+      const selectedId = (router.state.panes || [])[index]
+      if (selectedId) {
+        const query = `*[_id in ["drafts.${selectedId}", "${selectedId}"]]`
+        return (
+          <QueryContainer query={query}>
+            {({result, loading, error, onRetry}) => {
+              const item = removePublishedWithDrafts(result ? result.documents : [])[0]
+              if (item) {
+                return (
+                  <SanityDefaultPreview
+                    value={item}
+                    layout="inline"
+                    // type={schema.get(item._type)}
+                  />
+                )
+              }
+              return null
+            }}
+          </QueryContainer>
+        )
+      }
+      return null
+    }
+
     buildListQuery() {
       const {options} = this.props
       const {filter, defaultOrdering} = options
@@ -243,6 +271,7 @@ export default withRouterHOC(
 
     render() {
       const {
+        index,
         title,
         options,
         className,
@@ -265,6 +294,7 @@ export default withRouterHOC(
       return (
         <DefaultPane
           title={title}
+          subtitle={isCollapsed && this.getSelectedTitle(index)}
           className={className}
           styles={this.props.styles}
           index={this.props.index}

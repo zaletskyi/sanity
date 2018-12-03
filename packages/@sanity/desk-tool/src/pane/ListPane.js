@@ -94,13 +94,15 @@ export default withRouterHOC(
         isSelected,
         isCollapsed,
         onCollapse,
-        onExpand
+        onExpand,
+        router
       } = this.props
 
       return (
         <DefaultPane
           index={index}
           title={title}
+          subtitle={isCollapsed && (router.state.panes || [])[index]}
           styles={styles}
           className={className}
           isSelected={isSelected}

@@ -70,6 +70,7 @@ const isMenuButton = negate(isActionButton)
 class Pane extends React.Component {
   static propTypes = {
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    subtitle: PropTypes.node,
     isCollapsed: PropTypes.bool,
     onExpand: PropTypes.func,
     onCollapse: PropTypes.func,
@@ -326,6 +327,7 @@ class Pane extends React.Component {
   render() {
     const {
       title,
+      subtitle,
       children,
       isSelected,
       isCollapsed,
@@ -357,6 +359,7 @@ class Pane extends React.Component {
           >
             <h2 className={styles.title} onClick={this.handleTitleClick}>
               {title}
+              {subtitle && <span className={styles.subtitle}>{subtitle}</span>}
             </h2>
             <div className={styles.actions}>
               {renderActions ? renderActions(actions) : actions.map(this.renderAction)}
