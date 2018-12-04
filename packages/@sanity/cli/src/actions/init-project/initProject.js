@@ -29,9 +29,18 @@ export default async function initSanity(args, context) {
   const {output, prompt, workDir, apiClient, yarn, chalk} = context
   const cliFlags = args.extOptions
   const unattended = cliFlags.y || cliFlags.yes
+  const reconfigure = cliFlags['experimental-reconfigure']
+
   const print = unattended ? noop : output.print
 
-  print(`You're setting up a new project!`)
+  if (reconfigure) {
+    print(`You're reconfiguring an existing sanity project!`)
+    print(`Make sure you're running this command from a directory that`)
+    print('contains a sanity.json')
+    print('')
+  } else {
+    print(`You're setting up a new project!`)
+  }
   print(`We'll make sure you have an account with Sanity.io. Then we'll`)
   print('locally install an open-source JS content editor that connects to')
   print('the real-time hosted API on Sanity.io. Hang on.')
@@ -71,6 +80,47 @@ export default async function initSanity(args, context) {
 
   debug(`Dataset with name ${datasetName} selected`)
 
+  if (reconfigure) {
+    const existingManifestPath = path.join(workDir, 'sanity.json')
+    if (!(await fse.exists(existingManifestPath))) {
+      print(
+        `Error: No sanity.json found in current directory. In order to reconfigure for an existing project make sure "sanity init --reconfigure" is run from within directory which contains a sanity.json file.`
+      )
+      print(
+        'You can also manually reconfigure by adding the following to the "api"-section of your "sanity.json"'
+      )
+
+      print(`
+  "dataset: "${datasetName}",
+  "projectId": "${projectId}"
+`)
+      throw new Error('Reconfigure failed due to missing sanity.json in current workdir')
+    }
+    let currentManifest
+    try {
+      currentManifest = (await loadJson(path.join(workDir, 'sanity.json'))) || {}
+    } catch (error) {
+      throw new Error(`Unable to read sanity.json from current work directory: ${error.message}`)
+    }
+
+    const currentProjectConfig = currentManifest.project || {}
+    const currentApiConfig = currentManifest.api || {}
+
+    const nextManifest = {
+      ...currentManifest,
+      project: {
+        ...currentProjectConfig,
+        // keep name if present
+        name: currentProjectConfig.name || displayName
+      },
+      api: {...currentApiConfig, dataset: datasetName, projectId: projectId}
+    }
+
+    await fse.writeFile(existingManifestPath, `${JSON.stringify(nextManifest, null, 2)}\n`)
+
+    print(`\n${chalk.green('Sanity project has been reconfigured!')}\n`)
+    process.exit(0)
+  }
   // Gather project defaults based on environment
   const defaults = await getProjectDefaults(workDir, {isPlugin: false, context})
 
@@ -498,7 +548,7 @@ function absolutify(dir) {
   return path.isAbsolute(pathName) ? pathName : path.resolve(process.cwd(), pathName)
 }
 
-async function promptForAclMode(prompt, output) {
+export async function promptForAclMode(prompt, output) {
   const mode = await prompt.single({
     type: 'list',
     message: 'Choose dataset visibility – this can be changed later',
