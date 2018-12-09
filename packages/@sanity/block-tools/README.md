@@ -103,7 +103,7 @@ blockTools.htmlToBlocks(
   '<html><body><pre><code>const foo = "bar"</code></pre></body></html>',
   {
     blockContentType: compiledBlockContentType,
-    parseHtml: html => new JSDOM(html),
+    parseHtml: html => new JSDOM(html).window.document,
     rules: [
 
       // Special rule for code blocks (wrapped in pre and code tag)
