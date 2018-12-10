@@ -62,6 +62,14 @@ import Span from './nodes/Span'
 import styles from './styles/Editor.css'
 
 type PasteProgressResult = {status: string | null, error?: Error}
+type OnPasteResult = {insert?: FormBuilderValue[], path?: []}
+type OnPasteResultOrPromise = OnPasteResult | Promise<OnPasteResult>
+type OnPasteFn = ({
+  event: SyntheticEvent<>,
+  path: [],
+  type: Type,
+  value: ?(FormBuilderValue[])
+}) => OnPasteResultOrPromise
 
 type Props = {
   blockContentFeatures: BlockContentFeatures,
@@ -74,12 +82,7 @@ type Props = {
   onLoading: (props: {}) => void,
   onFocus: Path => void,
   onLoading: (props: {}) => void,
-  onPaste?: ({
-    event: SyntheticEvent<>,
-    path: [],
-    type: Type,
-    value: ?(FormBuilderValue[])
-  }) => {insert?: FormBuilderValue[], path?: []},
+  onPaste?: OnPasteFn,
   onPatch: (event: PatchEvent) => void,
   onToggleFullScreen: (event: SyntheticEvent<*>) => void,
   readOnly?: boolean,
@@ -263,7 +266,11 @@ export default class Editor extends React.Component<Props> {
     }
   }
 
-  handlePaste = (event: SyntheticEvent<>, editor: SlateEditor, next: void => void) => {
+  handlePaste = (
+    event: SyntheticEvent<>,
+    editor: SlateEditor,
+    next: void => void
+  ): Promise<any> | ?((void) => void) => {
     const onPaste = this.props.onPaste || onPasteFromPart
     if (!onPaste) {
       return next()
@@ -279,14 +286,19 @@ export default class Editor extends React.Component<Props> {
       path.push('children')
       path.push({_key: selection.focus.key})
     }
-    const result = onPaste({event, value, path, type})
-    if (result && result.insert) {
-      onPatch(PatchEvent.from([insert([result.insert], 'after', result.path || focusPath)]))
+
+    const resolved: Promise<OnPasteResultOrPromise> = Promise.resolve(
+      onPaste({event, value, path, type})
+    )
+    return resolved.then((result: OnPasteResult) => {
+      if (result && result.insert) {
+        onPatch(PatchEvent.from([insert(result.insert, 'after', result.path || focusPath)]))
+        onLoading({paste: null})
+        return result.insert
+      }
       onLoading({paste: null})
-      return result.insert
-    }
-    onLoading({paste: null})
-    return next()
+      return next()
+    })
   }
 
   handleCopy = (event: SyntheticEvent<>, editor: SlateEditor, next: void => void) => {
