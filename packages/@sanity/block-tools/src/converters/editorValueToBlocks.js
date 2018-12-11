@@ -71,6 +71,7 @@ function toSanitySpan(node, sanityBlock, spanIndex, blockContentFeatures, option
 }
 
 function toSanityBlock(block, blockContentFeatures, options = {}) {
+  // Handle block type
   if (block.type === 'contentBlock') {
     const sanityBlock = {
       ...block.data,
@@ -95,11 +96,20 @@ function toSanityBlock(block, blockContentFeatures, options = {}) {
     sanityBlock.markDefs = uniqBy(sanityBlock.markDefs, def => def._key)
     return sanityBlock
   }
+
+  // Handle block objects
   if (blockContentFeatures.types.blockObjects.map(bObj => bObj.name).includes(block.type)) {
     return createCustomBlockFromData(block)
   }
+
+  // Put the right type back on the block if marked as __unknown from blocksToEditorValue
+  if (block.type === '__unknown') {
+    block.type = block.data.value._type
+    return createCustomBlockFromData({...block, type: block.data.value._type})
+  }
+
   // A block that is not in the schema, so we don't know what to do with it
-  throw new Error(`Uknown block type: '${block.type}'`)
+  throw new Error(`Unknown block type: '${block.type}'`)
 }
 
 export default function editorValueToBlocks(value, type, options = {}) {

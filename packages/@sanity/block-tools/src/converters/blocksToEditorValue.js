@@ -135,14 +135,17 @@ function sanityBlockToRawNode(sanityBlock, blockContentFeatures, options = {}) {
 }
 
 // Embedded object
-function sanityBlockItemToRaw(blockItem) {
+function sanityBlockItemToRaw(blockItem, blockContentFeatures) {
   if (!blockItem._key) {
     blockItem._key = randomKey(12)
   }
+  const type = blockContentFeatures.types.blockObjects
+    .map(objType => objType.name)
+    .concat('block').includes(blockItem._type) ? blockItem._type : '__unknown'
   return {
     object: 'block',
     key: blockItem._key,
-    type: blockItem._type,
+    type,
     isVoid: true,
     data: {value: blockItem, _key: blockItem._key},
     nodes: [EMPTY_TEXT_NODE]
@@ -154,7 +157,7 @@ function sanityBlockItemToRawNode(blockItem, type, blockContentFeatures, options
 
   return blockItemType === 'block'
     ? sanityBlockToRawNode(blockItem, blockContentFeatures, options)
-    : sanityBlockItemToRaw(blockItem)
+    : sanityBlockItemToRaw(blockItem, blockContentFeatures, options)
 }
 
 function sanityBlocksArrayToRawNodes(blockArray, type, blockContentFeatures, options = {}) {
