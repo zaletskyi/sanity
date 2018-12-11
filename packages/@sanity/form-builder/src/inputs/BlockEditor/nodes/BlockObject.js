@@ -419,7 +419,7 @@ export default class BlockObject extends React.Component<Props, State> {
 
     if (!validTypes.includes(valueType)) {
       return (
-        <div onClick={this.handleCancelEvent}>
+        <div {...attributes}>
           <InvalidValue
             validTypes={validTypes}
             actualType={valueType}

@@ -10,7 +10,7 @@ export default function buildEditorSchema(
   blockContentFeatures: BlockContentFeatures,
   options: {withNormalization: boolean} = {withNormalization: true}
 ) {
-  const blocks = {}
+  const blocks = {__unknown: {isVoid: true}}
   blockContentFeatures.types.blockObjects.forEach(type => {
     blocks[type.name] = {isVoid: true}
   })
