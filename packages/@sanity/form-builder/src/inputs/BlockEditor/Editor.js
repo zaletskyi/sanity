@@ -62,8 +62,8 @@ import Span from './nodes/Span'
 import styles from './styles/Editor.css'
 
 type PasteProgressResult = {status: string | null, error?: Error}
-type OnPasteResult = {insert?: FormBuilderValue[], path?: []}
-type OnPasteResultOrPromise = OnPasteResult | Promise<OnPasteResult>
+type OnPasteResult = ?({insert?: FormBuilderValue[], path?: []} | Error)
+type OnPasteResultOrPromise = ?(OnPasteResult | Promise<OnPasteResult>)
 type OnPasteFn = ({
   event: SyntheticEvent<>,
   path: [],
@@ -266,39 +266,55 @@ export default class Editor extends React.Component<Props> {
     }
   }
 
+  // Handles user given onPaste function (or return default)
   handlePaste = (
     event: SyntheticEvent<>,
     editor: SlateEditor,
     next: void => void
   ): Promise<any> | ?((void) => void) => {
+
+    event.persist() // Keep the event through the plugin chain after calling next()
+
     const onPaste = this.props.onPaste || onPasteFromPart
     if (!onPaste) {
       return next()
     }
     const {focusPath, onPatch, onLoading, value, type} = this.props
     onLoading({paste: 'start'})
-    const {focusBlock, selection, focusText, focusInline} = editor.value
-    const path = []
-    if (focusBlock) {
-      path.push({_key: focusBlock.key})
-    }
-    if (focusInline || focusText) {
-      path.push('children')
-      path.push({_key: selection.focus.key})
+
+    const resolveOnPasteResultOrError = (): OnPasteResultOrPromise | Error => {
+      try {
+        return onPaste({event, value, path: focusPath, type})
+      } catch (error) {
+        return error
+      }
     }
 
-    const resolved: Promise<OnPasteResultOrPromise> = Promise.resolve(
-      onPaste({event, value, path, type})
-    )
-    return resolved.then((result: OnPasteResult) => {
-      if (result && result.insert) {
-        onPatch(PatchEvent.from([insert(result.insert, 'after', result.path || focusPath)]))
+    // Resolve it as promise (can be either async promise or sync return value)
+    const resolved: Promise<OnPasteResultOrPromise> = Promise.resolve(resolveOnPasteResultOrError())
+
+    return resolved
+      .then((result: OnPasteResult) => {
         onLoading({paste: null})
-        return result.insert
-      }
-      onLoading({paste: null})
-      return next()
-    })
+        if (result === undefined) {
+          return next()
+        }
+        if (result instanceof Error) {
+          throw result
+        }
+        if (result && result.insert) {
+          onPatch(PatchEvent.from([insert(result.insert, 'after', result.path || focusPath)]))
+          onLoading({paste: null})
+          return result.insert
+        }
+        console.warn('Your onPaste function returned something unexpected:', result)
+        return result
+      })
+      .catch(error => {
+        onLoading({paste: null})
+        console.error(error) // eslint-disable-line no-console
+        return error
+      })
   }
 
   handleCopy = (event: SyntheticEvent<>, editor: SlateEditor, next: void => void) => {
