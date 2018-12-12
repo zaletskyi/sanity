@@ -51,6 +51,7 @@ import ToggleListItemPlugin from './plugins/ToggleListItemPlugin'
 import UndoRedoPlugin from './plugins/UndoRedoPlugin'
 import WrapSpanPlugin from './plugins/WrapSpanPlugin'
 import FireFoxVoidNodePlugin from './plugins/FirefoxVoidNodePlugin'
+import FocusNoScrollPlugin from './plugins/FocusNoScrollPlugin'
 
 import BlockExtrasOverlay from './BlockExtrasOverlay'
 import BlockObject from './nodes/BlockObject'
@@ -88,6 +89,7 @@ type Props = {
   readOnly?: boolean,
   renderBlockActions?: RenderBlockActions,
   renderCustomMarkers?: RenderCustomMarkers,
+  scrollContainer: HTMLDivElement,
   setFocus: void => void,
   type: Type,
   undoRedoStack: UndoRedoStack,
@@ -95,9 +97,13 @@ type Props = {
   value: ?(FormBuilderValue[])
 }
 
-function scrollIntoView(node: SlateNode) {
+function scrollIntoView(node: SlateNode, opts = {}) {
   const element = findDOMNode(node) // eslint-disable-line react/no-find-dom-node
-  element.scrollIntoView({behavior: 'instant', block: 'center', inline: 'nearest'})
+  element.scrollIntoView({
+    behavior: opts.behavior || 'instant',
+    block: opts.block || 'center',
+    inline: opts.inline || 'nearest'
+  })
 }
 
 export default class Editor extends React.Component<Props> {
@@ -146,12 +152,17 @@ export default class Editor extends React.Component<Props> {
       InsertInlineObjectPlugin(props.type),
       InsertBlockObjectPlugin(),
       UndoRedoPlugin({stack: props.undoRedoStack}),
-      FireFoxVoidNodePlugin()
+      FireFoxVoidNodePlugin(),
+      FocusNoScrollPlugin(props.scrollContainer)
     ]
   }
 
   componentDidMount() {
     this.trackFocusPath()
+    const editor = this.getEditor()
+    if (editor) {
+      scrollIntoView(editor.value.focusBlock)
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -159,6 +170,7 @@ export default class Editor extends React.Component<Props> {
     if (!editor) {
       return
     }
+
     // Check if focusPAth has changed from what is currently the focus in the editor
     const {focusPath} = this.props
 
@@ -272,7 +284,6 @@ export default class Editor extends React.Component<Props> {
     editor: SlateEditor,
     next: void => void
   ): Promise<any> | ?((void) => void) => {
-
     event.persist() // Keep the event through the plugin chain after calling next()
 
     const onPaste = this.props.onPaste || onPasteFromPart
@@ -307,7 +318,7 @@ export default class Editor extends React.Component<Props> {
           onLoading({paste: null})
           return result.insert
         }
-        console.warn('Your onPaste function returned something unexpected:', result)
+        console.warn('Your onPaste function returned something unexpected:', result) // eslint-disable-line no-console
         return result
       })
       .catch(error => {

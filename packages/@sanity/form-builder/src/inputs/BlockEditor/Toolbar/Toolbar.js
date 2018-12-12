@@ -18,7 +18,7 @@ import WarningIcon from 'part:@sanity/base/warning-icon'
 
 import IS_MAC from '../utils/isMac'
 
-import type {BlockContentFeatures, SlateValue, SlateEditor, Type} from '../typeDefs'
+import type {BlockContentFeatures, SlateValue, Path, SlateEditor, Type} from '../typeDefs'
 
 import AnnotationButtons from './AnnotationButtons'
 import BlockStyleSelect from './BlockStyleSelect'
@@ -33,7 +33,7 @@ type Props = {
   editor: SlateEditor,
   editorValue: SlateValue,
   fullscreen: boolean,
-  onFocus: (nextPath: []) => void,
+  onFocus: Path => void,
   onToggleFullScreen: void => void,
   markers: [],
   style: {},
@@ -134,7 +134,6 @@ class Toolbar extends React.PureComponent<Props, State> {
                   blockContentFeatures={blockContentFeatures}
                   editor={editor}
                   editorValue={editorValue}
-                  onFocus={onFocus}
                 />
               </div>
               <Button className={styles.expandButton} onClick={this.handleExpand} kind="simple">

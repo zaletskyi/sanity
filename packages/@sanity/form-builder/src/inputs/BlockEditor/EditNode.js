@@ -14,11 +14,12 @@ import {findDOMNode} from 'slate-react'
 import {FormBuilderInput} from '../../FormBuilderInput'
 import {set, PatchEvent} from '../../PatchEvent'
 
-import type {Block, Marker, Path, Type, SlateNode, FormBuilderValue} from './typeDefs'
+import type {Block, Marker, Path, Type, SlateNode, FormBuilderValue, SlateEditor} from './typeDefs'
 
 import styles from './styles/EditNode.css'
 
 type Props = {
+  editor: SlateEditor,
   focusPath: Path,
   fullscreen: boolean,
   markers: Marker[],
@@ -72,9 +73,9 @@ export default class EditNode extends React.Component<Props> {
   }
 
   handleClose = () => {
-    const {focusPath, onFocus, setFocus} = this.props
+    const {focusPath, onFocus, editor} = this.props
     onFocus(focusPath.slice(0, 1))
-    setFocus()
+    editor.command('focusNoScroll')
   }
 
   handleDialogAction = () => {

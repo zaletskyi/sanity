@@ -5,7 +5,13 @@ import StyleSelect from 'part:@sanity/components/selects/style'
 
 import Text from '../nodes/Text'
 
-import type {BlockContentFeature, BlockContentFeatures, SlateValue, SlateEditor} from '../typeDefs'
+import type {
+  BlockContentFeature,
+  BlockContentFeatures,
+  Path,
+  SlateValue,
+  SlateEditor
+} from '../typeDefs'
 
 export type BlockStyleItem = {
   key: string,
@@ -73,7 +79,8 @@ export default class BlockStyleSelect extends React.Component<Props> {
 
   handleChange = (item: BlockStyleItem) => {
     const {editor} = this.props
-    editor.command('setBlockStyle', item.style).focus()
+    editor.command('setBlockStyle', item.style)
+    editor.command('focusNoScroll')
     this.forceUpdate()
   }
 

@@ -92,7 +92,7 @@ export default class AnnotationButtons extends React.Component<Props> {
       }, 200)
       return
     }
-    editor.focus()
+    editor.command('focusNoScroll')
   }
 
   renderAnnotationButton = (item: AnnotationItem) => {

@@ -103,10 +103,9 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
   static defaultProps = {
     readOnly: false
   }
-  scrollContainer: ?HTMLElement = null
-  rootElement: ?HTMLElement = null
-  editorWrapper: ?HTMLElement = null
+  scrollContainer: ElementRef<any> = React.createRef()
   editor: ElementRef<any> = React.createRef()
+  editorWrapper: ElementRef<any> = React.createRef()
 
   componentDidUpdate() {
     this.checkScrollHeight()
@@ -191,21 +190,10 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
     )
   }
 
-  setScrollContainer = (element: ?HTMLDivElement) => {
-    this.scrollContainer = element
-  }
-
-  setEditorWrapper = (element: ?HTMLDivElement) => {
-    this.editorWrapper = element
-  }
-
-  setRootElement = (element: ?HTMLDivElement) => {
-    this.rootElement = element
-  }
-
   checkScrollHeight = () => {
-    if (this.scrollContainer && this.editorWrapper) {
-      const preventScroll = this.scrollContainer.offsetHeight < this.editorWrapper.offsetHeight
+    if (this.scrollContainer && this.scrollContainer.current && this.editorWrapper.current) {
+      const preventScroll =
+        this.scrollContainer.current.offsetHeight < this.editorWrapper.current.offsetHeight
       if (this.state.preventScroll !== preventScroll) {
         this.setState({
           preventScroll
@@ -263,6 +251,7 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
         ref={this.editor}
         renderBlockActions={renderBlockActions}
         renderCustomMarkers={renderCustomMarkers}
+        scrollContainer={this.scrollContainer}
         setFocus={setFocus}
         type={type}
         undoRedoStack={undoRedoStack}
@@ -363,8 +352,8 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
           }
           onActivate={setFocus}
         >
-          <div className={scrollContainerClassNames} ref={this.setScrollContainer}>
-            <div className={styles.editorWrapper} ref={this.setEditorWrapper}>
+          <div className={scrollContainerClassNames} ref={this.scrollContainer}>
+            <div className={styles.editorWrapper} ref={this.editorWrapper}>
               {this.renderEditor()}
               {isEditingNode && fullscreen && this.renderNodeEditor()}
             </div>
@@ -384,7 +373,7 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
     const {focusPath, fullscreen, readOnly} = this.props
     const isFocused = (focusPath || []).length
     return (
-      <div className={styles.root} ref={this.setRootElement}>
+      <div className={styles.root}>
         {fullscreen && (
           <Portal>
             <StackedEscapeable onEscape={this.handleToggleFullscreen}>
