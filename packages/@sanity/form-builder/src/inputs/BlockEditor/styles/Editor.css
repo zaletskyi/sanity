@@ -10,15 +10,29 @@
   width: 100%;
   box-sizing: border-box;
   font-family: var(--block-editor-base-font-family);
+  margin: 0;
+  padding: 0;
+}
+
+.blockExtras {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: calc(100% - var(--block-extras-width));
+  pointer-events: none;
 }
 
 .editor {
   /* make the whole field clickable */
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.root.hasBlockExtras:not(.fullscreen) {
-  margin-right: var(--block-extras-width);
+.root.hasBlockExtras:not(.fullscreen) .editor {
+  padding-right: var(--block-extras-width);
 }
 
 /* less spacing on block objects / non-text objects */

@@ -116,8 +116,9 @@ export default class BlockExtrasFragment extends React.Component<Props, State> {
         style={{
           position: 'absolute',
           top: element.scrollTop + element.offsetTop,
+          width: '100%',
           height: rect.height,
-          width: rect.width
+          left: 0
         }}
       >
         <BlockExtras

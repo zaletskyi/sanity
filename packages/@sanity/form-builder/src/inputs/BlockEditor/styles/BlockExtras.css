@@ -1,42 +1,29 @@
 @import 'part:@sanity/base/theme/variables-style';
 
 .root {
-  /* display: flex; */
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  font-weight: normal;
   width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
   font-size: var(--font-size-xsmall);
   z-index: 0;
 }
 
 .content {
-  height: calc(100% - var(--extra-small-padding) * 2);
-  position: relative;
-  top: 0;
-  right: 0;
-  transform: translateX(100%);
+  margin-left: calc(100% - var(--block-extras-width));
+  pointer-events: all;
   border-left: 2px solid transparent;
   padding-left: var(--small-padding);
-  margin-bottom: var(--extra-small-padding);
-  margin-top: var(--extra-small-padding);
-
-  @nest &:hover {
-    background-color: color(var(--text-color) a(2%));
-  }
 
   @nest &:hover::before {
     content: '';
     position: absolute;
     box-sizing: border-box;
-    left: -2px;
+    left: 0;
     width: calc(100% + 2px);
     height: 100%;
-    transform: translateX(-100%);
-    background-color: color(var(--text-color) a(3%));
+    background-color: color(var(--text-color) a(5%));
   }
 }
 

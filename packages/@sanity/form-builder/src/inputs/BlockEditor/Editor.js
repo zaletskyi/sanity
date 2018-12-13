@@ -526,17 +526,6 @@ export default class Editor extends React.Component<Props> {
 
     return (
       <div className={classNames.join(' ')}>
-        <BlockExtrasOverlay
-          editor={this.editor}
-          editorValue={editorValue}
-          markers={markers}
-          onFocus={onFocus}
-          onPatch={onPatch}
-          renderBlockActions={readOnly ? undefined : renderBlockActions}
-          renderCustomMarkers={renderCustomMarkers}
-          userIsWritingText={userIsWritingText}
-          value={value}
-        />
         <SlateReactEditor
           spellCheck={false}
           className={styles.editor}
@@ -561,6 +550,20 @@ export default class Editor extends React.Component<Props> {
           style={{display: 'none'}}
           onDragOver={this.handleCancelEvent}
         />
+        <div className={styles.blockExtras}>
+          <BlockExtrasOverlay
+            className={styles.blockExtrasOverlay}
+            editor={this.editor}
+            editorValue={editorValue}
+            markers={markers}
+            onFocus={onFocus}
+            onPatch={onPatch}
+            renderBlockActions={readOnly ? undefined : renderBlockActions}
+            renderCustomMarkers={renderCustomMarkers}
+            userIsWritingText={userIsWritingText}
+            value={value}
+          />
+        </div>
       </div>
     )
   }
