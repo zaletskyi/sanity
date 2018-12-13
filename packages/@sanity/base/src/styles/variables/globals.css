@@ -50,6 +50,8 @@
   --text-selection-color: color(var(--brand-primary) alpha(20%));
 
   /* Block editor */
+  --block-editor-base-font-family: inherit;
+  --block-editor-header-font-family: inherit;
   --block-extras-width: 10rem;
   --block-extras-border-color: #ccc;
   --block-extras-background-color: #eee;

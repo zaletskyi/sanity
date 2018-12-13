@@ -9,5 +9,5 @@ type Props = {
 }
 
 export default function Header(props: Props) {
-  return <div className={`${styles.root} ${styles[props.style]}`}>{props.children}</div>
+  return <div className={styles[props.style]}>{props.children}</div>
 }
