@@ -38,7 +38,7 @@ export default class BlockExtras extends React.PureComponent<Props> {
   }
 
   render() {
-    const {blockActions, editor, markers, onFocus, renderCustomMarkers} = this.props
+    const {blockActions, editor, markers, onFocus, renderCustomMarkers, fullscreen} = this.props
     const scopedValidation = this.getValidationMarkers()
     const errors = scopedValidation.filter(mrkr => mrkr.level === 'error')
     const warnings = scopedValidation.filter(mrkr => mrkr.level === 'warning')
@@ -46,6 +46,7 @@ export default class BlockExtras extends React.PureComponent<Props> {
       <div
         className={classNames([
           styles.root,
+          fullscreen && styles.hasFullScreen,
           (blockActions || markers.length > 0) && styles.withSomething,
           errors.length > 0 && styles.withError,
           warnings.length > 0 && !errors.length && styles.withWarning

@@ -553,6 +553,7 @@ export default class Editor extends React.Component<Props> {
         <div className={styles.blockExtras}>
           <BlockExtrasOverlay
             className={styles.blockExtrasOverlay}
+            fullscreen={fullscreen}
             editor={this.editor}
             editorValue={editorValue}
             markers={markers}

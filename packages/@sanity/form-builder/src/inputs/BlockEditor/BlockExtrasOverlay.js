@@ -123,6 +123,7 @@ export default class BlockExtrasFragment extends React.Component<Props, State> {
       >
         <BlockExtras
           block={node}
+          fullscreen={this.props.fullscreen}
           blockActions={actions}
           editor={this.props.editor && this.props.editor.current}
           markers={markers}
