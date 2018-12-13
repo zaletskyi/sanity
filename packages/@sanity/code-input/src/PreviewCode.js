@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
 import {get} from 'lodash'
-import styles from './Preview.css'
+import styles from './PreviewCode.css'
 
 /* eslint-disable import/no-unassigned-import */
 import 'brace/mode/batchfile'
@@ -36,6 +36,16 @@ export default class PreviewCode extends PureComponent {
     })
   }
 
+  ace = React.createRef()
+
+  componentDidMount() {
+    const ace = this.ace && this.ace.current
+    if (ace) {
+      ace.editor.renderer.$cursorLayer.element.style.opacity = 0
+      ace.editor.textInput.getElement().disabled = true
+    }
+  }
+
   render() {
     const {value, type} = this.props
     const fixedLanguage = get(type, 'options.language')
@@ -43,6 +53,7 @@ export default class PreviewCode extends PureComponent {
       <div className={styles.root}>
         <div className={styles.aceWrapper}>
           <AceEditor
+            ref={this.ace}
             mode={(value && value.language) || fixedLanguage || 'text'}
             theme="monokai"
             width="100%"
