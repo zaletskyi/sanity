@@ -9,10 +9,11 @@ import type {Marker, SlateEditor, Path, RenderCustomMarkers} from './typeDefs'
 import styles from './styles/BlockExtras.css'
 
 type Props = {
+  blockActions?: Node,
   editor: SlateEditor,
+  fullscreen: boolean,
   markers: Marker[],
   onFocus: Path => void,
-  blockActions?: Node,
   renderCustomMarkers?: RenderCustomMarkers
 }
 

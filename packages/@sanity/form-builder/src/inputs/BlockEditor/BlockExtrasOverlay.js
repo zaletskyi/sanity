@@ -20,6 +20,7 @@ import type {
 type Props = {
   editor: ?SlateEditor,
   editorValue: ?SlateValue,
+  fullscreen: boolean,
   markers: Marker[],
   onFocus: Path => void,
   onPatch: (event: PatchEvent) => void,
@@ -76,7 +77,7 @@ export default class BlockExtrasFragment extends React.Component<Props, State> {
 
   // eslint-disable-next-line complexity
   renderBlockExtras = (node: SlateNode) => {
-    const {onFocus, renderCustomMarkers, renderBlockActions, onPatch} = this.props
+    const {onFocus, renderCustomMarkers, renderBlockActions, onPatch, fullscreen, editor} = this.props
     const markers = this.props.markers.filter(
       marker => marker.path[0] && marker.path[0]._key && marker.path[0]._key === node.key
     )
@@ -123,9 +124,9 @@ export default class BlockExtrasFragment extends React.Component<Props, State> {
       >
         <BlockExtras
           block={node}
-          fullscreen={this.props.fullscreen}
+          fullscreen={fullscreen}
           blockActions={actions}
-          editor={this.props.editor && this.props.editor.current}
+          editor={editor && editor.current}
           markers={markers}
           onFocus={onFocus}
           renderCustomMarkers={renderCustomMarkers}
