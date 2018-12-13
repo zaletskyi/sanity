@@ -164,6 +164,7 @@ export default {
             }
           ]
         },
+        {type: 'code'},
         {
           title: 'Image',
           type: 'image',
