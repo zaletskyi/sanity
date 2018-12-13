@@ -1,8 +1,8 @@
 # Sanity Block Tools
 
-Various tools for processing Sanity block content
+Various tools for processing Sanity block content. Mostly used internally in the Studio code, but it got some nice functions (especially `htmlToBlocks`) which is handy when you are importing data from HTML into your dataset as block text.
 
-## Interface
+## Example
 
 Let's start with a complete example:
 
@@ -40,17 +40,24 @@ const blockContentType = defaultSchema.get('blogPost')
   .fields.find(field => field.name === 'body').type
 
 
-// Convert HTML to blocks
+// Convert HTML to block array
 const blocks = blockTools.htmlToBlocks(
   '<html><body><h1>Hello world!</h1><body></html>',
   blockContentType
 )
+// Outputs
+//
+//  {
+//    _type: 'block',
+//    style: 'h1'
+//    children: [
+//      {
+//        _type: 'span'
+//        text: 'Hello world!'
+//      }
+//    ]
+//  }
 
-// Convert an editor value to blocks
-const blocks = blockTools.editorValueToBlocks(editorValue, blockContentType)
-
-// Convert blocks to a editor value
-const slateState = blockTools.blocksToEditorValue(blocks, blockContentType)
 
 // Get the feature-set of a blockContentType
 const features = blockTools.getBlockContentFeatures(blockContentType)
@@ -59,11 +66,11 @@ const features = blockTools.getBlockContentFeatures(blockContentType)
 
 ## Methods
 
-### ``htmlToBlocks(html, options)`` (html deserializer)
+### ``htmlToBlocks(html, blockContentType, options)`` (html deserializer)
 
 This will deserialize the input html (string) into blocks.
 
-#### Options
+#### Params
 
 ##### ``blockContentType``
 
@@ -71,7 +78,9 @@ A compiled version of the block content schema type.
 When you give this option, the deserializer will respect the schema when deserializing to blocks.
 I.e. if the schema doesn't allow h2-styles, all h2 html-elements will deserialized to normal styled blocks.
 
-##### ``parseHtml``
+##### ``options``
+
+###### ``parseHtml``
 The HTML-deserialization is done by default by the browser's native DOMParser.
 On the server side you can give the function ``parseHtml``
 that parses the html into a DOMParser compatible model / API.
@@ -134,16 +143,6 @@ blockTools.htmlToBlocks(
 
 ```
 
-### ``blocksToEditorValue(blocks, blockContentTypeSchema)``
-
-Convert blocks to a serialized editor value respecting the input schema.
-
-
-### ``editorValueToBlocks(slateState, blockContentTypeSchema)``
-
-Convert a slate state to blocks respecting the input schema.
-
-
 ### ``getBlockContentFeatures(blockContentType)``
 
 Will return an object with the features enabled for the input block content type.
@@ -171,3 +170,13 @@ Will return an object with the features enabled for the input block content type
 }
 ```
 
+### ``blocksToEditorValue(blocks, blockContentTypeSchema)``
+
+Convert blocks to a serialized editor value respecting the input schema.
+This function does not make much sense outside the studio internal code.
+
+
+### ``editorValueToBlocks(slateState, blockContentTypeSchema)``
+
+Convert a slate state to blocks respecting the input schema.
+This function does not make much sense outside the studio internal code.
