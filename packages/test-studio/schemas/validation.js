@@ -110,6 +110,34 @@ export default {
       ]
     },
     {
+      name: 'polymorphicArrays',
+      title: 'Polymorphic arrays',
+      type: 'array',
+      of: [
+        {
+          title: 'Content',
+          name: 'content',
+          type: 'object',
+          fields: [{name: 'foo', type: 'string'}]
+        },
+        {
+          title: 'Feature',
+          type: 'object',
+          fields: [
+            {
+              name: 'test',
+              title: 'Test',
+              type: 'string',
+              validation: Rule =>
+                Rule.required()
+                  .min(10)
+                  .max(80)
+            }
+          ]
+        }
+      ]
+    },
+    {
       name: 'authors',
       title: 'Authors',
       description: 'Unique inline authors',
