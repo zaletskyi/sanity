@@ -1,6 +1,6 @@
 {
   "name": "@sanity/core",
-  "version": "0.139.6",
+  "version": "0.139.7-improve-search.0",
   "description": "Sanity core bundle, containing required packages for the development and build process",
   "main": "lib/index.js",
   "author": "Sanity.io <hello@sanity.io>",
@@ -31,7 +31,7 @@
     "@sanity/mutator": "0.139.1",
     "@sanity/plugin-loader": "0.139.2",
     "@sanity/resolver": "0.139.0",
-    "@sanity/schema": "0.139.6",
+    "@sanity/schema": "0.139.7-improve-search.0",
     "@sanity/server": "0.139.3",
     "@sanity/util": "0.139.0",
     "@sanity/uuid": "0.139.0",
