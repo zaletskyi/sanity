@@ -78,9 +78,6 @@ class SearchContainer extends React.PureComponent {
         }),
         debounceTime(100),
         switchMap(queryStr => search(queryStr, {limit: 100})),
-        // we need this filtering because the search may return documents of types not in schema
-        map(hits => hits.filter(hit => schema.has(hit._type))),
-        map(removeDupes),
         tap(results => {
           this.setState({
             isLoading: false,
@@ -210,23 +207,25 @@ class SearchContainer extends React.PureComponent {
   }
 
   renderItem = (item, index, className) => {
-    const type = schema.get(item._type)
+    const {hit} = item
+    const type = schema.get(hit._type)
     return (
       <IntentLink
         className={className}
         intent="edit"
-        params={{id: item._id, type: type.name}}
+        params={{id: hit._id, type: type.name}}
         data-hit-index={index}
         onMouseDown={this.handleHitMouseDown}
         onClick={this.handleHitClick}
         tabIndex={-1}
       >
         <Preview
-          value={item}
+          value={hit}
           layout="default"
           type={type}
           status={<div className={resultsStyles.itemType}>{type.title}</div>}
         />
+        ({item.score})
         <Ink duration={200} opacity={0.1} radius={200} />
       </IntentLink>
     )

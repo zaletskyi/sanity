@@ -23,7 +23,3 @@ export const joinPath = pathArray =>
     }
     return isFirst ? pathSegment : `${prev}.${pathSegment}`
   }, '')
-
-export function getSearchableTypeNames() {
-  return schema.getTypeNames().filter(typeName => !typeName.startsWith('sanity.'))
-}
