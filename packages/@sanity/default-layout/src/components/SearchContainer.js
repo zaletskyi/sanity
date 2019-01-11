@@ -225,7 +225,6 @@ class SearchContainer extends React.PureComponent {
           type={type}
           status={<div className={resultsStyles.itemType}>{type.title}</div>}
         />
-        ({item.score})
         <Ink duration={200} opacity={0.1} radius={200} />
       </IntentLink>
     )
