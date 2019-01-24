@@ -1,15 +1,23 @@
 import stringHash from 'string-hash'
+import palx from 'palx'
+import styles from './colorHasher.css'
 
+const brandPrimary = styles.brandPrimary || '#fcc'
+
+const pal = palx(brandPrimary)
+
+// Picks strong colors from a palette created from the brand primary color
 function toColor(str) {
-  const rgb = [0, 0, 0]
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    const idx = char % 3
-    rgb[idx] = (rgb[i % 3] + 13 * (char % 13)) % 20
+  if (!str) {
+    return brandPrimary
   }
-
-  const rgbStr = rgb.map((color, idx) => (idx === 3 ? color : (4 + color) * 17)).join(',')
-  return `rgb(${rgbStr})`
+  const hashFloat = stringHash(str) / Math.pow(2, 32)
+  // ignore base and black from palx
+  const hue = Object.keys(pal).slice(2)[Math.floor(hashFloat * (Object.keys(pal).length - 2))]
+  // Skip the first 6 colors because they are light
+  const strongColors = pal[hue].slice(6)
+  const colorStep = Math.floor(hashFloat * strongColors.length) + 6
+  return pal[hue][colorStep]
 }
 
 // Sanity user IDs often start with the same character, reversing the string
@@ -21,8 +29,4 @@ function reverse(str) {
     .join('')
 }
 
-function hash(str) {
-  return stringHash(reverse(str))
-}
-
-export default str => toColor(hash(str))
+export default str => toColor(str && reverse(str))
