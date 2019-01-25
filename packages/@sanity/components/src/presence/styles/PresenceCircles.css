@@ -1,0 +1,15 @@
+.root {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 1.5em;
+  height: 1em;
+}
+
+.item {
+  position: absolute;
+  transform-origin: center center;
+}
+
+.root .item:hover {
+  z-index: 50 !important;
+}

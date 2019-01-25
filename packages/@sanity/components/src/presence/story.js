@@ -1,16 +1,17 @@
 import React from 'react'
-import {storiesOf, action} from 'part:@sanity/storybook'
-import {withKnobs, text, number, boolean} from 'part:@sanity/storybook/addons/knobs'
+import {storiesOf} from 'part:@sanity/storybook'
+import {withKnobs, text, number, boolean, color} from 'part:@sanity/storybook/addons/knobs'
 // import Sanity from 'part:@sanity/storybook/addons/sanity'
-import PresenceList from './PresenceList'
+import PresenceCircles from './PresenceCircles'
+import PresenceCircle from './PresenceCircle'
 import {range} from 'lodash'
 import Chance from 'chance'
 import colorHasher from './colorHasher'
+import PresenceList from './PresenceList'
+
 const chance = new Chance()
 
-
-
-const markers = range(40).map(marker => {
+const markers = range(50).map(marker => {
   return {
     type: 'presence',
     identity: chance.geohash({length: 9}),
@@ -25,7 +26,7 @@ const markers = range(40).map(marker => {
 
 storiesOf('Presence')
   .addDecorator(withKnobs)
-  .add('List', () => {
+  .add('Circles', () => {
     const showImage = boolean('show image', true, 'test')
     const newMarkers = markers.map(marker => {
       return {
@@ -38,12 +39,30 @@ storiesOf('Presence')
     })
     return (
       <div style={{padding: '2em', backgroundColor: '#ccc', position: 'relative'}}>
-        <PresenceList
-          markers={newMarkers.slice(newMarkers.length - number('Number of markers', 3, 'test'))}
+        <PresenceCircles markers={newMarkers.slice(0, number('Number of markers', 10, 'test'))} />
+      </div>
+    )
+  })
+
+  .add('Circle', () => {
+    return (
+      <div style={{fontSize: '2em'}}>
+        <PresenceCircle
+          text={text('text', 'KG', 'props')}
+          title={text('title', undefined, 'props')}
+          animateOnHover={boolean('animateOnHover', false, 'props')}
+          interactive={boolean('interactive', false, 'props')}
+          imageUrl={text('imageUrl', 'https://placeimg.com/64/64', 'props')}
+          color={color('color', '#D0021B', 'props')}
         />
       </div>
     )
   })
+
+  .add('List', () => {
+    return <PresenceList markers={markers} />
+  })
+
   .add('colorHasher', () => {
     const color = colorHasher(text('string'))
     return (
