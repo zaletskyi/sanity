@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {TransitionMotion, spring} from 'react-motion'
 import PresenceCircle from './PresenceCircle'
 import styles from './styles/PresenceList.css'
 

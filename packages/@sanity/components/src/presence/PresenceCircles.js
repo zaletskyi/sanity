@@ -4,7 +4,8 @@ import {TransitionMotion, spring} from 'react-motion'
 import colorHasher from './colorHasher'
 import PresenceCircle from './PresenceCircle'
 import styles from './styles/PresenceCircles.css'
-import PresenceList from './PresenceList';
+import PresenceList from './PresenceList'
+import {Tooltip} from 'react-tippy'
 
 const MAX_WIDTH = 100
 const MAX_DISTANCE = 30
@@ -79,6 +80,8 @@ export default class PresenceCircles extends React.PureComponent {
       return null
     }
 
+    const offset = extraMarkers.length > 0 ? -10 : 0
+
     return (
       <TransitionMotion
         styles={shownMarkers.map((marker, idx) => {
@@ -90,7 +93,7 @@ export default class PresenceCircles extends React.PureComponent {
               index
             },
             style: {
-              x: spring(calcX(index, len), {damping: 15, stiffness: 400}),
+              x: spring(offset + calcX(index, len), {damping: 15, stiffness: 400}),
               opacity: spring(1, {damping: 30, stiffness: 400}),
               scale: spring(1)
             }
@@ -128,13 +131,20 @@ export default class PresenceCircles extends React.PureComponent {
               )
             })}
             {extraMarkers.length > 0 && (
-              <div className={styles.item} style={{zIndex: shownMarkers.length}}>
-                <PresenceCircle
-                  animateOnHover
-                  text={`+${extraMarkers.length}`}
-                  interactive
+              <div className={styles.extraItems} style={{zIndex: shownMarkers.length}}>
+                <Tooltip
                   html={<PresenceList markers={extraMarkers} />}
-                />
+                  interactive
+                  position="top"
+                  trigger="mouseenter"
+                  animation="scale"
+                  arrow
+                  theme="light"
+                  distance="10"
+                  duration={50}
+                >
+                  +{extraMarkers.length}
+                </Tooltip>
               </div>
             )}
           </div>
