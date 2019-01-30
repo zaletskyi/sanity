@@ -87,9 +87,9 @@ export default function createOperationToPatches(
     if (!formBuilderValue || formBuilderValue.length === 0) {
       // Value is undefined
       if (!formBuilderValue) {
-        patches.push(
-          setIfMissing(editorValueToBlocks(afterValue.toJSON(VALUE_TO_JSON_OPTS), blockContentType))
-        )
+        const blocks = editorValueToBlocks(afterValue.toJSON(VALUE_TO_JSON_OPTS), blockContentType)
+        patches.push(setIfMissing(blocks))
+        patches.push(set(blocks, []))
       }
       // Value is empty
       if (formBuilderValue && formBuilderValue.length === 0) {
@@ -161,9 +161,9 @@ export default function createOperationToPatches(
     const block = toBlock(afterValue, operation.path.get(0))
     // Value is undefined
     if (!formBuilderValue) {
-      patches.push(
-        setIfMissing(editorValueToBlocks(afterValue.toJSON(VALUE_TO_JSON_OPTS), blockContentType))
-      )
+      const blocks = editorValueToBlocks(afterValue.toJSON(VALUE_TO_JSON_OPTS), blockContentType)
+      patches.push(setIfMissing(blocks))
+      patches.set(blocks, [])
     }
     // Value is empty
     if (formBuilderValue && formBuilderValue.length === 0) {
@@ -186,9 +186,8 @@ export default function createOperationToPatches(
   ) {
     // Value is undefined
     if (!formBuilderValue) {
-      return [
-        setIfMissing(editorValueToBlocks(afterValue.toJSON(VALUE_TO_JSON_OPTS), blockContentType))
-      ]
+      const blocks = editorValueToBlocks(afterValue.toJSON(VALUE_TO_JSON_OPTS), blockContentType)
+      return [setIfMissing(blocks), set(blocks, [])]
     }
     // Value is empty
     if (formBuilderValue && formBuilderValue.length === 0) {
